@@ -1,3 +1,5 @@
+# 🚧 Work in progress 🚧 #
+
 # Counter
 
 ## Project structure
