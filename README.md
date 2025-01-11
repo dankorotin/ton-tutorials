@@ -4,6 +4,28 @@
 
 These tutorials reflect my journey into the depths of smart contract development for TON. Each one is a step-by-step guide, with code extensively commented in key areas to provide context and details. Welcome aboard! 🏴‍☠️
 
+## Before you begin
+
+### 1. Install Node.js ###
+
+*(Skip this step if you already have it installed.)*
+
+On a Mac with [Homebrew](https://brew.sh):
+```
+brew install node
+```
+Otherwise: [download the installer](https://nodejs.org/en) from the official site.
+
+### 2. Choose an IDE ###
+
+I'd suggest [WebStorm](https://www.jetbrains.com/webstorm/) (it's the one I'm using, free for non-commercial use) or [Visual Studio Code](https://code.visualstudio.com) (free).
+
+### 3. Add the plugin/extension for Tolk. ###
+
+JetBrains IDEs (WebStorm, IDEA) [plugin](https://plugins.jetbrains.com/plugin/23382-ton) or VS Code [extension](https://marketplace.visualstudio.com/items?itemName=ton-core.tolk-vscode).
+
+### ...And youre ready to rock! 🤘 ###
+
 ## Tutorials
 ### 👶 Smart contract creation and testing
 
