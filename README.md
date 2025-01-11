@@ -6,7 +6,7 @@ These tutorials reflect my journey into the depths of smart contract development
 
 ## Before you begin
 
-### 1. Install Node.js ###
+### 1. Install Node.js
 
 *(Skip this step if you already have it installed.)*
 
@@ -16,21 +16,25 @@ brew install node
 ```
 Otherwise: [download the installer](https://nodejs.org/en) from the official site.
 
-### 2. Choose an IDE ###
+### 2. Choose an IDE
 
 I'd suggest [WebStorm](https://www.jetbrains.com/webstorm/) (it's the one I'm using, free for non-commercial use) or [Visual Studio Code](https://code.visualstudio.com) (free).
 
-### 3. Add the plugin/extension for Tolk. ###
+### 3. Add the plugin/extension for Tolk.
 
 JetBrains IDEs (WebStorm, IDEA) [plugin](https://plugins.jetbrains.com/plugin/23382-ton) or VS Code [extension](https://marketplace.visualstudio.com/items?itemName=ton-core.tolk-vscode).
 
 *...And you're ready to rock! 🤘*
 
-## Tutorials
-### 👶 Smart contract creation and testing
+---
+
+# Tutorials
+## 👶 Smart contract creation and testing
 
 1. [Simple counter smart contract](./1-simple-counter/README.md).
 
-## Providing feedback
+---
+
+### ✍️ Feedback
 
 Feel free to create issues and/or pull requests; I'll do my best to review them ASAP.
