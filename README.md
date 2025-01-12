@@ -8,7 +8,7 @@ These tutorials reflect my journey into the depths of smart contract development
 
 ### 1. Install Node.js
 
-*(Skip this step if you already have it installed. Just make sure it's version 18 or later.)*
+> (Skip this step if you already have it installed. Just make sure it's version 18 or later.)
 
 On a Mac with [Homebrew](https://brew.sh):
 ```
@@ -24,9 +24,7 @@ I'd suggest [WebStorm](https://www.jetbrains.com/webstorm/) (it's the one I'm us
 
 JetBrains IDEs (WebStorm, IDEA) [plugin](https://plugins.jetbrains.com/plugin/23382-ton) or VS Code [extension](https://marketplace.visualstudio.com/items?itemName=ton-core.tolk-vscode).
 
-*...And you're ready to rock! 🤘*
-
----
+> ...And you're ready to rock! 🤘
 
 # Tutorials
 ## 👶 Smart contract creation and testing
