@@ -3,7 +3,7 @@ import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, 
 export type CounterConfig = {};
 
 export function counterConfigToCell(config: CounterConfig): Cell {
-    // Create the cell that will be stored in `c4` register on deployment.
+    // Create the cell that will be stored in `c4` register.
     // It contains zero as the initial value, stored as a 64-bit integer.
     return beginCell().storeUint(0, 64).endCell();
 }
@@ -22,10 +22,11 @@ export class Counter implements Contract {
     }
 
     async sendDeploy(provider: ContractProvider, via: Sender, value: bigint) {
+        const body = counterConfigToCell({});
         await provider.internal(via, {
             value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
-            body: beginCell().endCell(),
+            body: body,
         });
     }
 
