@@ -12,7 +12,9 @@ A dedicated `get` method (implemented and explained later in the tutorial) allow
 
 > `Get` methods are free, as they don't mutate the blockchain state and are handled off-chain.
 
-## Creating project
+To those with some experience: we will not be checking for opcodes and flags to keep things simple for this tutorial, but we will add an `assert` to make sure we have enough data to convert to a number.
+
+## Creating the project
 
 We will use [Blueprint](https://github.com/ton-community/blueprint) to simplify and streamline the setup, so open a terminal window (a separate one or in your IDE), navigate to the directory with your TON projects, and run the following command:
 
