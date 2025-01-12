@@ -8,7 +8,7 @@ These tutorials reflect my journey into the depths of smart contract development
 
 ### 1. Install Node.js
 
-*(Skip this step if you already have it installed.)*
+*(Skip this step if you already have it installed. Just make sure it's version 18 or later.)*
 
 On a Mac with [Homebrew](https://brew.sh):
 ```
