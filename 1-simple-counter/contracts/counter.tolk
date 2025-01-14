@@ -3,11 +3,11 @@
 // https://docs.ton.org/v3/documentation/smart-contracts/message-management/sending-messages#types-of-messages
 fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: slice) {
     // Throw an exception if there aren't enough bits in the message.
-    // Here we expect it to be at least 64 bits long; otherwise throw an exception.
+    // Here we expect it to be at least 16 bits long; otherwise throw an exception.
     // Throwing an exception is a way to let TVM and the caller know something went wrong.
-    // The exception code is from the list of TVM standard exit codes:
-    // https://docs.ton.org/learn/tvm-instructions/tvm-exit-codes
-    assert(msgBody.getRemainingBitsCount() >= 64, 5);
+    // The exception code (cell underflow) is from the list of TVM standard exit codes:
+    // https://ton-blockchain.github.io/docs/tvm.pdf
+    assert(msgBody.getRemainingBitsCount() >= 16, 9);
 
     // 1. Begin parsing the existing data storage of the contract (i.e., read the previously saved data).
     // The saved data here is a `cell` stored in `c4` register of TVM.
@@ -21,9 +21,9 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
     // 2. Read 64 bits of saved data and treat them as a 64-bit unsigned integer.
     var total = dataSlice.loadUint(64);
 
-    // 3. Read the same length bit sequence from the incoming message body
-    // and treat it as a 64-bit unsigned integer.
-    val toAdd = msgBody.loadUint(64);
+    // 3. Read the bit sequence from the incoming message body
+    // and treat it as a 16-bit unsigned integer.
+    val toAdd = msgBody.loadUint(16);
 
     // 4. Sum the existing total amount with the value from the message.
     // You could also write it like this: `total = total + toAdd;`
@@ -32,7 +32,7 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
     // 5. Make a `builder` (the only way to mutate a `cell`).
     var cellBuilder = beginCell();
 
-    // 6. Save the new value of `total` as a 64-bit insigned integer.
+    // 6. Save the new value of `total` as a 64-bit unsigned integer.
     cellBuilder.storeUint(total, 64);
 
     // 7. "Seal" the cell to prepare it for saving.

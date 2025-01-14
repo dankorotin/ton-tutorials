@@ -12,7 +12,7 @@ A dedicated `get` method (implemented and explained later in the tutorial) allow
 
 > `Get` methods are free, as they don't mutate the blockchain state and are handled off-chain.
 
-To those with some experience: we will not be checking for opcodes and flags to keep things simple for this tutorial, but we will add an `assert` to make sure we have enough data to convert to a number.
+For those with some experience in TON development: we will not be checking for the existence of opcodes and flags in the incoming message to keep this tutorial simple, but we will add an `assert` to ensure there is enough data to convert to a number.
 
 ## Creating the project
 
