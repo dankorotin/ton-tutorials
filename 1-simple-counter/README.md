@@ -32,7 +32,7 @@ This command creates a project from template. Make the following choices: name t
 
 Open the project directory (named `my-project` or whatever name you chose) and take a look at the contents. Depending on the IDE you're using, there may be more or fewer directories, but for now, we'll focus on just one: `contracts`. Navigate to it, and inside you'll see the only file: `counter.tolk`. Open it in the IDE and take a look at the code.
 
-## Let's dive in!
+## Reading the data
 
 The only function generated for you by Blueprint will look like this:
 ```tolk
@@ -59,6 +59,23 @@ var dataSlice = getContractData().beginParse();
 
 `var` here means that this variable (`dataSlice`) is *mutable*, i.e., it can (and will) be changed. `getContractData()` reads the root cell in `c4` (it's still a `cell` at this step), and `beginParse()` makes it a `slice` we can read from. This is exactly the reason we declared it as mutable: the cursor will move as we read data, mutating it.
 
+Now, add the following line of code below the previous one:
+
+```tolk
+var total = dataSlice.loadUint(64);
+```
+
+This one is also mutable, as we will increase it by the value we received in the message body. Calling `loadUint(64)` on the slice we read in the first line of code makes the cursor in it start moving bit by bit, reading up to 64 bits (if available) and converting them to an *unsigned integer* (one that cannot be negative). 64 bits means it can have a maximum value of 2 to the power of 64 minus one, which is a *very, very* large number (18 446 744 073 709 551 615). We need to subtract one since the first possible value is 0, not 1.
+
+Finally, we get to reading the value passed in the message body. Add the following line:
+
+```tolk
+val toAdd = msgBody.loadUint(16);
+```
+
+`val` here means that the `toAdd` variable is *immutable*, i.e., it will be initialized once and will not change. `msgBody` is one of the function parameters we discussed above. It has the `slice` type, so we can read from it right away, unlike the contract data. We expect the body to contain 16 bits of information that we treat as a 16-bit unsigned integer, so we read it with `loadUint(16)` and assign it to `toAdd`. A 16-bit unsigned integer can have a maximum value of 2 to the power of 16 minus one (65 535). You can choose it to be larger, of course. The motivation behind using 16 bits is that it will take a very long time to reach the maximum value of the counter (the 64-bit unsigned integer stored in the contract's cell that we read from above).
+
+## Increasing the counter
 
 [//]: TODO: (As you only have one script &#40;`deployCounter.ts`&#41; there will be no prompts regarding what to run, but that is the script being executed. In particular, this command...)
 
