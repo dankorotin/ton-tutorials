@@ -32,6 +32,8 @@ This command creates a project from template. Make the following choices: name t
 
 Open the project directory (named `my-project` or whatever name you chose) and take a look at the contents. Depending on the IDE you're using, there may be more or fewer directories, but for now, we'll focus on just one: `contracts`. Navigate to it, and inside you'll see the only file: `counter.tolk`. Open it in the IDE and take a look at the code.
 
+## Let's dive in!
+
 The only function generated for you by Blueprint will look like this:
 ```tolk
 fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: slice) {
@@ -39,33 +41,25 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
 }
 ```
 
+> If you're coming from the FunC world, you may be surprised by the absence of the `impure` specifier. In Tolk, all functions are [impure by default](https://docs.ton.org/v3/documentation/smart-contracts/tolk/tolk-vs-func/in-detail). You can explicitly annotate a function as `pure`, and then impure operations are forbidden in its body (exceptions, global modifications, calling non-pure functions, etc.).
+
+As mentioned above, your smart contract consists of **code** (functions like this) and **data** (stored in so-called cells). Let's deal with the former first. This particular function (part of your contract's **code**) is the one called when a smart contract is accessed on-chain (for example, by another smart contract). This type of message is called "internal," hence the function name. Let's take a closer look at its parameters, especially the last two: `msgFull` and `msgBody`.
+
+- `msgFull` has the type `cell`. Cells are data structures that can hold up to 1023 bits of information and have links to up to 4 other cells. This allows for creating "trees" of cells, potentially storing as much data as you need. To read data from cells, you need to begin parsing them.
+- `msgBody` is a `slice`. A slice is a representation of a cell that you can read data from. It has a cursor that moves forward as you read data from the slice. Here, it's already set to the beginning of the message body—just what we will need very soon.
+
+Your smart contract also has its own storage (**data**): a root cell stored in the so-called `c4` register (potentially having links to more cells if you need to store more than 1023 bits). Let's start by reading the data it consists of.
+
+Add the following line inside the function:
+```tolk
+var dataSlice = getContractData().beginParse();
+```
+
+> If you ever get confused, you can always open the `counter.tolk` file in this tutorial's repository and take a look at the final implementation. The code there is commented in detail, helping you understand what's going on and why.
+
+`var` here means that this variable (`dataSlice`) is *mutable*, i.e., it can (and will) be changed. `getContractData()` reads the root cell in `c4` (it's still a `cell` at this step), and `beginParse()` makes it a `slice` we can read from. This is exactly the reason we declared it as mutable: the cursor will move as we read data, mutating it.
+
+
 [//]: TODO: (As you only have one script &#40;`deployCounter.ts`&#41; there will be no prompts regarding what to run, but that is the script being executed. In particular, this command...)
 
 # 🚧 Work in progress 🚧 #
-
-# Counter
-
-## Project structure
-
--   `contracts` - source code of all the smart contracts of the project and their dependencies.
--   `wrappers` - wrapper classes (implementing `Contract` from ton-core) for the contracts, including any [de]serialization primitives and compilation functions.
--   `tests` - tests for the contracts.
--   `scripts` - scripts used by the project, mainly the deployment scripts.
-
-## How to use
-
-### Build
-
-`npx blueprint build` or `yarn blueprint build`
-
-### Test
-
-`npx blueprint test` or `yarn blueprint test`
-
-### Deploy or run another script
-
-`npx blueprint run` or `yarn blueprint run`
-
-### Add a new contract
-
-`npx blueprint create ContractName` or `yarn blueprint create ContractName`
