@@ -65,7 +65,9 @@ Now, add the following line of code below the previous one:
 var total = dataSlice.loadUint(64);
 ```
 
-This one is also mutable, as we will increase it by the value we received in the message body. Calling `loadUint(64)` on the slice we read in the first line of code makes the cursor in it start moving bit by bit, reading up to 64 bits (if available) and converting them to an *unsigned integer* (one that cannot be negative). 64 bits means it can have a maximum value of 2 to the power of 64 minus one, which is a *very, very* large number (18 446 744 073 709 551 615). We need to subtract one since the first possible value is 0, not 1.
+This one is also mutable, as we will increase it by the value we received in the message body. Calling `loadUint(64)` on the slice we read in the first line of code makes the cursor in it start moving bit by bit, reading up to 64 bits (if available) and converting them to an *unsigned integer* (one that cannot be negative).
+
+> 64 bits means it can have a maximum value of 2 to the power of 64 minus one, which is a *very, very* large number (18 446 744 073 709 551 615). We need to subtract one since the first possible value is 0, not 1.
 
 Finally, we get to reading the value passed in the message body. Add the following line:
 
@@ -73,9 +75,53 @@ Finally, we get to reading the value passed in the message body. Add the followi
 val toAdd = msgBody.loadUint(16);
 ```
 
-`val` here means that the `toAdd` variable is *immutable*, i.e., it will be initialized once and will not change. `msgBody` is one of the function parameters we discussed above. It has the `slice` type, so we can read from it right away, unlike the contract data. We expect the body to contain 16 bits of information that we treat as a 16-bit unsigned integer, so we read it with `loadUint(16)` and assign it to `toAdd`. A 16-bit unsigned integer can have a maximum value of 2 to the power of 16 minus one (65 535). You can choose it to be larger, of course. The motivation behind using 16 bits is that it will take a very long time to reach the maximum value of the counter (the 64-bit unsigned integer stored in the contract's cell that we read from above).
+`val` here means that the `toAdd` variable is *immutable*, i.e., it will be initialized once and will not change. `msgBody` is one of the function parameters we discussed above. It has the `slice` type, so we can read from it right away, unlike the contract data. We expect the body to contain 16 bits of information that we treat as a 16-bit unsigned integer, so we read it with `loadUint(16)` and assign it to `toAdd`.
+
+> A 16-bit unsigned integer can have a maximum value of 2 to the power of 16 minus one (65 535). You can choose it to be larger, of course. The motivation behind using 16 bits is that it will take a very long time to reach the maximum value of the counter (the 64-bit unsigned integer stored in the contract's cell that we read from above).
 
 ## Increasing the counter
+
+Your code should look like this at the moment:
+
+```tolk
+fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: slice) {
+    var dataSlice = getContractData().beginParse();
+    var total = dataSlice.loadUint(64);
+    val toAdd = msgBody.loadUint(16);
+}
+```
+
+We've read all the data we need (the current counter value, stored in a mutable variable `total`, and the value to add, stored in the immutable one—`toAdd`). Let's increase the `total` and save it to the contract's persistent storage. Add the following lines to your existing code:
+
+```tolk
+total += toAdd;
+var cellBuilder = beginCell();
+cellBuilder.storeUint(total, 64);
+val finalizedCell = cellBuilder.endCell();
+setContractData(finalizedCell);
+```
+
+Here's what happens here, step by step:
+1. `total` gets increased by the value of `toAdd` (you could alternatively write it as `total = total + toAdd`).
+2. A cell builder gets created by calling `var cellBuilder = beginCell()`. `builder` is a third "flavor" of data representation, in addition to `cell` and `slice`. A `cell` stores data, a `slice` lets you read from it, and a `builder` lets you create and modify data that you will later "pack" as a `cell`. We declare it as a `var` because it will be mutated (i.e., some data will be stored in it, as shown in the next step).
+3. Calling `cellBuilder.storeUint(total, 64)` stores the `total` value as 64 bits in the `builder` (the future `cell`).
+4. `val finalizedCell = cellBuilder.endCell()` declares an immutable variable of type `cell` (this is what you get by calling `endCell` on a `builder`).
+5. Finally, `setContractData(finalizedCell)` saves the data (a `cell`) from `finalizedCell` into the contract's storage (replacing the `cell` from the `c4` register that we read from at the very beginning of the function).
+
+## Checking the input data
+
+By now, we have assumed that the internal messages the contract receives will contain valid data in the body (i.e., at least 16 bits of data we will treat as a 16-bit integer). We can formalize this assumption as an assertion and throw an exception (i.e., halt the execution and return an error code) if the amount of data is not sufficient to proceed.
+
+Add this line of code at the very beginning of the function, above the line where we begin parsing the contract's data:
+
+```tolk
+assert(msgBody.getRemainingBitsCount() >= 16, 9);
+```
+
+Here are the details:
+- Declare an `assert` with two arguments: the condition and the exception code.
+- The condition is: “count the bits left in the message body and make sure the amount is 16 or more” (it doesn't move the slice's cursor).
+- The code is 9. You can choose any code you like, but it’s better to stick to conventions. This one is found in the [TVM Whitepaper](https://ton-blockchain.github.io/docs/tvm.pdf) and means “Cell underflow: Deserialization error”.
 
 [//]: TODO: (As you only have one script &#40;`deployCounter.ts`&#41; there will be no prompts regarding what to run, but that is the script being executed. In particular, this command...)
 
