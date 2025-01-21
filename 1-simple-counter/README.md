@@ -351,7 +351,7 @@ If everything went well, your wallet's balance will decrease, and you will see t
 
 ## Calling `get` Methods
 
-Finally, let's add a way to call the `get` method on our smart contract and check the total! Add the following code below the function you just wrote:
+Finally, let's add a way to call the `get` method on our smart contract and check the total! Add the following code below the `sendIncrement(provider: ...)` function in the wrapper:
 
 ```typescript
 async getTotal(provider: ContractProvider) {
@@ -362,6 +362,30 @@ async getTotal(provider: ContractProvider) {
 
 > **Important!** You might have noticed that the methods in the wrapper start with `send` and `get`. Stick to this convention for wrapper methods that send messages and call `get` methods.
 
-In the function above, we call the `total` method by its name and read the result as a number. It will be logged to the console in the script you will write very soon.
+In the function above, we call the `total` method of the smart contract by its name and read the result as a number. It will be logged to the console in the script you will write next.
 
-# 🚧 Work in progress 🚧 #
+Navigate to the `scripts` directory and create another file named `getTotal.ts`. Paste this code into it:
+
+```typescript
+import { compile, NetworkProvider } from '@ton/blueprint';
+import { Counter } from '../wrappers/Counter';
+
+export async function run(provider: NetworkProvider) {
+    const counter = provider.open(Counter.createFromConfig({}, await compile('Counter')));
+    console.log('Current total:', await counter.getTotal());
+}
+```
+
+The first line of the function in this one is the same as in the other two, and the second one calls the wrapper method we've just added and logs the result to the console. Let's test it!
+
+Execute `npx blueprint run` in the console once again, and this time choose `getTotal`. You won't need to pay anything, as **`get` methods are free to execute**. You should see something like this in the console as the result:
+
+```
+Current total: 98387n
+```
+
+## Wrapping Up
+
+Congratulations on finishing the first step of this exciting journey! 🥳
+
+Feel free to create issues and/or pull requests if you notice any mistakes, outdated code, or have some cool ideas. See you in the next tutorial! 👋
