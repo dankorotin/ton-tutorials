@@ -179,6 +179,28 @@ get fun total() {
 }
 ```
 
+At this point, you can open a terminal window and build your contract:
+```bash
+npx blueprint build
+```
+
+There should be no errors, but you can introduce some yourself to see how they look. For example, you could change `var dataSlice = getContractData().beginParse()` to `val` and see what happens when you build the contract.
+
+<details>
+  <summary>Click to reveal the spoiler!</summary>
+
+> You will get an error pointing out that you're trying to modify the immutable variable `dataSlice` when reading the unsigned integer in the next line, consequently moving the slice's cursor.
+
+</details>
+
+## Test Network Deployment
+
+Your first contract is ready to be deployed to a real blockchain! There's one made specifically for testing purposes: [testnet](https://docs.ton.org/v3/documentation/smart-contracts/getting-started/testnet). It's very similar to the "real" TON blockchain, but the currency here has no real-world value, and the data can be wiped at any moment. Other than that, there's no difference, so your smart contracts will behave just as they would on the production chain.
+
+The first step is to get some test TON from the test faucet: [Testgiver TON Bot](https://t.me/testgiver_ton_bot). You will need a wallet on the testnet to receive and spend the test TON; an app like Tonkeeper will allow you to use one. Alternatively, you can use the web-based wallet [here](https://wallet.ton.org/?testnet=true).
+
+> **Tip:** If you're stuck at any step, refer to [this document](https://docs.ton.org/v3/documentation/smart-contracts/getting-started/testnet). It includes helpful links and detailed explanations about the test network, wallets, and more.
+
 [//]: TODO: (As you only have one script &#40;`deployCounter.ts`&#41; there will be no prompts regarding what to run, but that is the script being executed. In particular, this command...)
 
 # 🚧 Work in progress 🚧 #
