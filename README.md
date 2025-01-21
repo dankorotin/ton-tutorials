@@ -1,4 +1,4 @@
-# Smart Contract Development for TON with Tolk
+# TON Smart Contract Development with Tolk
 
 Tolk is a smart contract development language for The Open Network (TON) blockchain, featuring a modern Kotlin-like syntax. Its compiler is a fork of the FunC compiler, so essentially, you get the same bytecode with a much friendlier syntax and fewer opportunities to make errors (see more on the differences and improvements [here](https://docs.ton.org/v3/documentation/smart-contracts/tolk/tolk-vs-func/in-detail)).
 
