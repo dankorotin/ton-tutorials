@@ -294,8 +294,74 @@ Contract deployed at address EQAtcdYS2AsDEpNKFRmt9POvKWUB_WfNHbqzhCp3aP2uiOuQ
 You can view it at https://testnet.tonscan.org/address/EQAtcdYS2AsDEpNKFRmt9POvKWUB_WfNHbqzhCp3aP2uiOuQ
 ```
 
-> **Important!** Remember: if you didn't modify the methods in your smart contract, it will have the same address (as it's determined by the initial code and data), so you may see transactions from other users when following the link.
+> **Important!** Remember: if you didn't modify the methods in your smart contract in any significant way compared to the code from this tutorial (e.g., still expect a 16-bit unsigned integer, don't use flags, etc.), it will have the same address (as it's determined by the initial code and data). As a result, you may see transactions from other users when following the link.
 
 You can use https://testnet.tonscan.org/ to check your contract's transactions, as well as your wallet's.
+
+## Sending Messages
+
+As you may remember, our smart contract can receive **internal** and **get** messages. We've already triggered the internal one once when we deployed the contract, but it passed `0` in its body. Here's how we did it: running the `deployCounter.ts` script called the `sendDeploy(provider: ...)` method in the wrapper (`Counter.ts` in the `wrappers` directory), which looks like this:
+
+```typescript
+async sendDeploy(provider: ContractProvider, via: Sender, value: bigint) {
+    await provider.internal(via, {
+        value,
+        sendMode: SendMode.PAY_GAS_SEPARATELY,
+        body: beginCell().storeUint(0, 16).endCell(),
+    });
+}
+```
+
+As you can see, the value `0` is hardcoded in the `storeUint(0, 16)` call. We'd like to be able to pass an arbitrary value there to increase the total value stored in the contract. Copy the code above, paste it below the `sendDeploy(provider: ...)` function, and modify it to look like this:
+
+```typescript
+async sendIncrement(provider: ContractProvider, via: Sender, value: bigint, incrementValue: bigint) {
+    await provider.internal(via, {
+        value,
+        sendMode: SendMode.PAY_GAS_SEPARATELY,
+        body: beginCell().storeUint(incrementValue, 16).endCell(),
+    });
+}
+```
+
+Here's the breakdown of what's different in this one:
+1. It's named `sendIncrement` and has an additional parameter: `incrementValue: bigint`. This allows us to pass a value to increase the total by.
+2. When constructing the body, we now use `incrementValue` instead of the hardcoded `0`.
+
+> We could use this method during deployment instead by simply passing `0` to it. However, let's leave things as-is for now for the sake of clarity.
+
+Now, navigate to the `scripts` directory and create a new file named `sendIncrement.ts`. Paste this code into it:
+
+```typescript
+import { compile, NetworkProvider } from '@ton/blueprint';
+import { toNano } from '@ton/core';
+import { Counter } from '../wrappers/Counter';
+
+export async function run(provider: NetworkProvider) {
+    const counter = provider.open(Counter.createFromConfig({}, await compile('Counter')));
+    await counter.sendIncrement(provider.sender(), toNano('0.05'), 42n);
+}
+```
+
+It's very similar to `deployCounter.ts`. The only difference is that it calls the `sendIncrement(provider: ...)` method, passing the value `42` (you can choose your own, of course), and doesn't wait for deployment.
+
+Execute `npx blueprint run` in the console again, and this time you will be provided with a choice of two scripts: `deployCounter` and `sendIncrement`. Choose the latter and follow steps similar to those you performed during deployment (only now your wallet should already be connected if you used one). Remember to check for and confirm the transaction in your wallet.
+
+If everything went well, your wallet's balance will decrease, and you will see the transaction in the explorer ([here](https://testnet.tonscan.org/address/EQAtcdYS2AsDEpNKFRmt9POvKWUB_WfNHbqzhCp3aP2uiOuQ) or at the address of your contract).
+
+## Calling `get` Methods
+
+Finally, let's add a way to call the `get` method on our smart contract and check the total! Add the following code below the function you just wrote:
+
+```typescript
+async getTotal(provider: ContractProvider) {
+    const result = (await provider.get('total', [])).stack;
+    return result.readBigNumber();
+}
+```
+
+> **Important!** You might have noticed that the methods in the wrapper start with `send` and `get`. Stick to this convention for wrapper methods that send messages and call `get` methods.
+
+In the function above, we call the `total` method by its name and read the result as a number. It will be logged to the console in the script you will write very soon.
 
 # 🚧 Work in progress 🚧 #
