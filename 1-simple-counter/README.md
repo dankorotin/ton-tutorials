@@ -10,7 +10,7 @@ Smart contracts on TON interact only by sending and receiving **messages** (unli
 
 ## Tutorial Goals
 
-In this tutorial, we'll create a simple **counter contract**, deploy it to the testnet, and query the current total value. The logic will be very basic: it increments a counter by a specified number from an **internal message** and saves the total in its persistent data.
+In this tutorial, we'll create a simple **counter contract**, deploy it to the testnet, and increase and query the current total value. The logic will be very basic: it increments a counter by a specified number from an **internal message** and saves the total in its persistent data.
 
 > **Internal messages** are those sent between blockchain entities and cannot be sent from off-chain. **These methods consume gas** (blockchain currency paid for transactions, code execution, and storage).
 
