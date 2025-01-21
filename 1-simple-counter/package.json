@@ -7,9 +7,9 @@
         "test": "jest --verbose"
     },
     "devDependencies": {
-        "@ton/blueprint": "^0.27.0",
-        "@ton/sandbox": "^0.23.0",
-        "@ton/test-utils": "^0.4.2",
+        "@ton/blueprint": "^0.28.0",
+        "@ton/sandbox": "^0.24.0",
+        "@ton/test-utils": "^0.5.0",
         "@types/jest": "^29.5.14",
         "@types/node": "^22.8.7",
         "jest": "^29.7.0",
