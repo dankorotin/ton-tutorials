@@ -22,11 +22,10 @@ export class Counter implements Contract {
     }
 
     async sendDeploy(provider: ContractProvider, via: Sender, value: bigint) {
-        const body = counterConfigToCell({});
         await provider.internal(via, {
             value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
-            body: body,
+            body: beginCell().storeUint(0, 16).endCell(),
         });
     }
 

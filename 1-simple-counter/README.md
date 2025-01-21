@@ -201,6 +201,101 @@ The first step is to get some test TON from the test faucet: [Testgiver TON Bot]
 
 > **Tip:** If you're stuck at any step, refer to [this document](https://docs.ton.org/v3/documentation/smart-contracts/getting-started/testnet). It includes helpful links and detailed explanations about the test network, wallets, and more.
 
-[//]: TODO: (As you only have one script &#40;`deployCounter.ts`&#41; there will be no prompts regarding what to run, but that is the script being executed. In particular, this command...)
+### Wrappers
+
+Go to the `wrappers` directory and open `Counter.ts`. It's a TypeScript file containing code that lets you interact with your contract. Let's take a closer look at its contents, particularly this function:
+
+```typescript
+export function counterConfigToCell(config: CounterConfig): Cell {
+    return beginCell().endCell();
+}
+```
+
+It's used later in the code to create the initial cell with data that will be created when the contract is deployed. We need to store 64 bits of data and start with zero, so modify the only line inside this function to look like this:
+
+```typescript
+return beginCell().storeUint(0, 64).endCell();
+```
+
+Find the `createFromConfig(config: ...)` function below. You will see that it uses the call to `counterConfigToCell(config: ...)` to initialize the contract's data. It then initializes and returns the newly created `Counter` object. We won't need to modify anything here.
+
+Now, take a look at the function below it: `sendDeploy(provider: ...)`. It sends an internal message with an empty (for now) cell and some amount of TON to your contract upon deployment.
+
+> **Note:** Don't worry—it will be test TON if you're deploying to testnet.
+
+Let's modify the cell creation code in this function and send a zero 16-bit integer in it to avoid triggering the assertion we added before. Modify the `body: beginCell().endCell()` line to look like this:
+```typescript
+body: beginCell().storeUint(0, 16).endCell(),
+```
+
+Here's how your wrapper should look by now:
+```typescript
+import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode } from '@ton/core';
+
+export type CounterConfig = {};
+
+export function counterConfigToCell(config: CounterConfig): Cell {
+    return beginCell().storeUint(0, 64).endCell();
+}
+
+export class Counter implements Contract {
+    constructor(readonly address: Address, readonly init?: { code: Cell; data: Cell }) {}
+
+    static createFromAddress(address: Address) {
+        return new Counter(address);
+    }
+
+    static createFromConfig(config: CounterConfig, code: Cell, workchain = 0) {
+        const data = counterConfigToCell(config);
+        const init = { code, data };
+        return new Counter(contractAddress(workchain, init), init);
+    }
+
+    async sendDeploy(provider: ContractProvider, via: Sender, value: bigint) {
+        await provider.internal(via, {
+            value,
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+            body: beginCell().storeUint(0, 16).endCell(),
+        });
+    }
+}
+```
+
+### Scripts
+
+Navigate to the `scripts` directory and open the only file there: `deployCounter`. It's a TypeScript file containing one function:
+
+```typescript
+export async function run(provider: NetworkProvider) {
+    const counter = provider.open(Counter.createFromConfig({}, await compile('Counter')));
+    await counter.sendDeploy(provider.sender(), toNano('0.05'));
+    await provider.waitForDeploy(counter.address);
+}
+```
+
+The scripts in this directory can be run with a console command you will learn soon, but first, let's understand what this particular one does:
+1. First, it creates and compiles the wrapper object we modified above.
+2. Next, it calls the `sendDeploy(provider: ...)` method on it, essentially sending an internal message from your wallet with 0.05 TON attached to it.
+3. Finally, it awaits the successful deployment.
+
+Now it's finally time to deploy the contract! Open the terminal and run the following command:
+
+```bash
+npx blueprint run
+```
+
+It looks for the scripts in the `scripts` directory and executes their `run(provider: ...)` function. Since you only have one script (`deployCounter.ts`), there will be no prompts regarding what to run—that is the script being executed.
+
+Follow the instructions (remember to choose **`testnet`** when offered a choice!) and select one of the options to complete the transaction. For example, if you're using **Tonkeeper**, you will need to scan the QR code that appears after selecting this option and confirm the transaction from your test wallet. You will receive a success message after a short while. If you don't, try again and pay close attention to the on-screen steps.
+
+Successful deployment should end with a message like this:
+```
+Contract deployed at address EQAtcdYS2AsDEpNKFRmt9POvKWUB_WfNHbqzhCp3aP2uiOuQ
+You can view it at https://testnet.tonscan.org/address/EQAtcdYS2AsDEpNKFRmt9POvKWUB_WfNHbqzhCp3aP2uiOuQ
+```
+
+> **Important!** Remember: if you didn't modify the methods in your smart contract, it will have the same address (as it's determined by the initial code and data), so you may see transactions from other users when following the link.
+
+You can use https://testnet.tonscan.org/ to check your contract's transactions, as well as your wallet's.
 
 # 🚧 Work in progress 🚧 #
