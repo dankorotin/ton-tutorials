@@ -1,4 +1,4 @@
-# Testing Contract Behavior
+# Testing Smart Contract Behavior
 
 ## Before We Begin
 
@@ -69,7 +69,7 @@ Now, let's take a look at the final lines of the file—the only test case:
     });
 ```
 
-`it(...` creates a test closure with the following parameters: a name (`'should deploy'` in this case), an optional function (the one with the comments in it), and an optional timeout (none here). Since the deployment result is checked before each test, this test case is empty.
+`it(...` is a test case function with the following parameters: a name (`'should deploy'` in this case), an optional function (the one with the comments in it; you can omit it to make the test case pending and provide the implementation later, e.g., `it('should deploy');`), and an optional timeout (none here). Since the deployment result is checked before each test, this test case is empty.
 
 It's time to run the tests and see if they pass. Run this command in the terminal window inside your project's directory:
 
@@ -109,9 +109,9 @@ After confirming that the test indeed fails, restore the modified line in the wr
 
 ## Testing the Contract Logic
 
-The contract you created in the previous tutorial can receive internal messages and has a `get` method returning the current value stored in its persistent storage. We've already tested it by sending messages and calling methods on the testnet, but this process is tedious and time-consuming. Let's take a look at a much faster way of doing it.
+The contract you created in the previous tutorial can receive internal messages and has a `get` method returning the current value stored in its persistent storage. We've already tested it by sending messages and calling methods on testnet, but this process is tedious and time-consuming. Let's take a look at a much faster way of doing it.
 
-Add the following method below the existing `it(...`:
+Add the following method below the existing `it(...` function:
 
 ```typescript
 it('should increase the total', async () => {
