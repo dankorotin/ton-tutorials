@@ -36,7 +36,7 @@ Create and deploy a smart contract, and send messages.
 
 ### 2. [Testing and Adapting Contract Behavior](2-tests-and-opcodes/README.md)
 
-Alter the smart contract behavior with opcodes, test with Blueprint, and get a taste of Test-Driven Development (TDD)!
+Alter the smart contract behavior with opcodes, test with Sandbox, and get a taste of Test-Driven Development (TDD)!
 
 ---
 

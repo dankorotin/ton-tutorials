@@ -17,11 +17,8 @@ describe('Counter', () => {
 
     beforeEach(async () => {
         blockchain = await Blockchain.create();
-
         counter = blockchain.openContract(Counter.createFromConfig({}, code));
-
         deployer = await blockchain.treasury('deployer');
-
         const deployResult = await counter.sendDeploy(deployer.getSender(), toNano('0.05'));
 
         expect(deployResult.transactions).toHaveTransaction({
