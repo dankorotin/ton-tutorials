@@ -111,7 +111,43 @@ The cell created here satisfies the `assert` condition in the contract, so the c
 
 After confirming that the test indeed fails, restore the modified line in the wrapper, and let's add more tests!
 
-## Testing Internal Messages
+## Testing the Contract Logic
+
+The contract you created in the previous tutorial can receive internal messages and has a `get` method returning the current value stored in its persistent storage. We've already tested it by sending messages and calling methods on the testnet, but this process is tedious and time-consuming. Let's take a look at a much faster way of doing it.
+
+Add the following method below the existing `it(...`:
+
+```typescript
+it('should increase the total', async () => {
+    await counter.sendIncrement(deployer.getSender(), toNano('0.05'), 42n);
+    expect(await counter.getTotal()).toEqual(42n);
+    
+    const johnDoe = await blockchain.treasury('johndoe');
+    await counter.sendIncrement(johnDoe.getSender(), toNano('0.05'), 1337n);
+    expect(await counter.getTotal()).toEqual(1379n);
+});
+```
+
+Here's what happens here:
+1. We created another test case with the name `'should increase the total'` and a closure with the code to execute every time the test is run.
+2. The first lines calls the internal message handler function in the contract, sending `0.05` TON and the value to increment the counter by: `42n` (`n` means this number is a `BigInt`). The sender here is `deployer`, which is created before each test. As the contract is deployed with its stored value set to `0`, we then call the `get` method and expect it to return `42n` (`0 + 42`).
+3. Then we introduce another sender (`johnDoe`) to ensure any contract can send messages to our contract, not just its deployer. The last two lines are similar to the first two, except the sender now is `johnDoe` and the number to increase the counter by is `1337n`. Before the message is handled, the total is `42n`, so we expect it to be `1379n` afterward (`42 + 1337`).
+
+Run the tests again, and you should see a similar result:
+
+```
+ PASS  tests/Counter.spec.ts
+  Counter
+    ✓ should deploy (180 ms)
+    ✓ should increase the total (96 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       2 passed, 2 total
+Snapshots:   0 total
+Time:        1.652 s, estimated 2 s
+```
+
+Now, two test cases were executed, and both succeeded. Let's add another one...
 
 ---
 

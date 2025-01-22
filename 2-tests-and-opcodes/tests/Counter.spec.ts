@@ -34,4 +34,15 @@ describe('Counter', () => {
         // the check is done inside beforeEach
         // blockchain and counter are ready to use
     });
+
+    it('should increase the total', async () => {
+        await counter.sendIncrement(deployer.getSender(), toNano('0.05'), 42n);
+        expect(await counter.getTotal()).toEqual(42n);
+
+        // Introduce a new blockchain entity by creating another `TreasuryContract` instance.
+        // This will ensure anyone can increase the total, not only the deployer.
+        const johnDoe = await blockchain.treasury('johndoe');
+        await counter.sendIncrement(johnDoe.getSender(), toNano('0.05'), 1337n);
+        expect(await counter.getTotal()).toEqual(1379n);
+    });
 });
