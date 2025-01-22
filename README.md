@@ -34,9 +34,9 @@ JetBrains IDEs (WebStorm, IDEA) [plugin](https://plugins.jetbrains.com/plugin/23
 
 Create and deploy a smart contract, and send messages.
 
-### 2. [Testing and Adapting Contract Behavior](2-tests-and-opcodes/README.md)
+### 2. [Testing Smart Contract Behavior](2-tests/README.md)
 
-Alter the smart contract behavior with opcodes, test with Sandbox, and get a taste of Test-Driven Development (TDD)!
+Testing with Sandbox.
 
 ---
 

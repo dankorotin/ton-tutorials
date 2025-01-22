@@ -1,4 +1,4 @@
-# Testing and Adapting Contract Behavior
+# Testing Contract Behavior
 
 ## Before We Begin
 
@@ -6,11 +6,7 @@ Here we assume that you followed the first tutorial ([Creating and Deploying a S
 
 ## Tutorial Goals
 
-After writing, deploying, and “testing” (by sending messages) your first smart contract, you might have some questions, such as:
-1.	Is there a way to test the code *before* deploying it?
-2.	How can I make the contract handle internal messages *in more than one way*?
-
-These are exactly the questions we'll tackle today! Let's start with the tests.
+After writing, deploying, and “testing” (by sending messages) your first smart contract, you might have some questions, such as: **"Is there a way to test the code *before* deploying it?"** This is exactly the question we'll tackle today!
 
 ## Testing with Sandbox
 
