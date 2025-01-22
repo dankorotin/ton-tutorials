@@ -6,10 +6,9 @@ Here we assume that you followed the first tutorial ([Creating and Deploying a S
 
 ## Tutorial Goals
 
-After writing, deploying, and "testing" (by sending messages) your first smart contract, you may have some questions, namely these:
-
-1. Is there a way to test the code *before* deploying it?
-2. How can I make the contract handle internal messages in more than one way?
+After writing, deploying, and “testing” (by sending messages) your first smart contract, you might have some questions, such as:
+1.	Is there a way to test the code *before* deploying it?
+2.	How can I make the contract handle internal messages *in more than one way*?
 
 These are exactly the questions we'll tackle today! Let's start with the tests.
 
@@ -60,7 +59,59 @@ beforeEach(async () => {
 ```
 
 Let's break it down:
-1. First, three variables are declared (these can be used in all of your test cases). `blockchain` is an instance of the blockchain emulator where you can deploy your contract, send messages, and more. `deployer` is a `Treasury` contract that will deploy your contract (it has a lot of TON to test any behavior involving payments), and `counter` is the smart contract you wrote in the previous tutorial, created from the wrapper.
+1. First, three variables are declared (these can be used in all of your test cases). `blockchain` is an instance of the blockchain emulator where you can deploy your contract, send messages, and more. `deployer` is a `TreasuryContract` that will deploy your contract (it has a lot of TON to test any behavior involving payments; its role is similar to your wallet's when you deploy a contract), and `counter` is the smart contract you wrote in the previous tutorial, created from the wrapper.
+2. The `beforeEach(async () ... ` method is called before each test, creating new `blockchain`, `counter`, and `deployer` instances to ensure a clean state so that tests won't affect each other.
+3. Then, the `deployResult` constant is initialized with the result of the deployment attempt.
+4. Finally, the `expect` function is used to check that the `deployResult.transactions` array contains a transaction matching the one declared in the `toHaveTransactions` matcher.
+
+Now, let's take a look at the final lines of the file—the only test case:
+
+```typescript
+    it('should deploy', async () => {
+        // the check is done inside beforeEach
+        // blockchain and counter are ready to use
+    });
+```
+
+`it(...` creates a test closure with the following parameters: a name (`'should deploy'` in this case), an optional function (the one with the comments in it), and an optional timeout (none here). Since the deployment result is checked before each test, this test case is empty.
+
+It's time to run the tests and see if they pass. Run this command in the terminal window inside your project's directory:
+
+```bash
+npx blueprint test
+```
+
+The only test will run and should return success:
+
+```
+ PASS  tests/Counter.spec.ts
+  Counter
+    ✓ should deploy (184 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        1.645 s
+Ran all test suites.
+```
+
+But what exactly is tested here? Take a look at this line of code from the `beforeEach`:
+
+```typescript
+const deployResult = await counter.sendDeploy(deployer.getSender(), toNano('0.05'));
+```
+
+It calls the `sendDeploy` method from the wrapper, which includes the following line constructing the message body:
+
+```typescript
+body: beginCell().storeUint(0, 16).endCell()
+```
+
+The cell created here satisfies the `assert` condition in the contract, so the contract has a successful transaction upon deployment. How can we introduce an error here? One way would be to use fewer bits than the contract expects (say, 8). Modify this line (e.g., like this: `body: beginCell().storeUint(0, 8).endCell()`) and run the tests again.
+
+After confirming that the test indeed fails, restore the modified line in the wrapper, and let's add more tests!
+
+## Testing Internal Messages
 
 ---
 
