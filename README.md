@@ -26,10 +26,15 @@ JetBrains IDEs (WebStorm, IDEA) [plugin](https://plugins.jetbrains.com/plugin/23
 
 > ...And you're ready to rock! 🤘
 
-# Tutorials
-## 👶 Smart contract creation and testing
+# 👶 Smart Contract Basics and Testing
 
-1. [Simple counter smart contract](./1-simple-counter/README.md).
+## 1. [Creating and Deploying a Smart Contract](1-create-and-deploy/README.md)
+
+Create and deploy a smart contract, and send messages.
+
+## 2. [Testing and Adapting Contract Behavior](2-tests-and-opcodes/README.md)
+
+Alter the smart contract behavior with opcodes, test with Blueprint, and get a taste of Test-Driven Development (TDD)!
 
 ---
 

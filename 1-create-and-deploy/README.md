@@ -1,4 +1,4 @@
-# Your first smart contract
+# Creating and Deploying a Smart Contract
 
 ## Basic Concepts
 
