@@ -54,7 +54,7 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
 As mentioned above, a smart contract has some **code** (functions like this) and **data** (stored in so-called cells). Let's deal with the former first. This particular function (part of your contract's **code**) is the one called when a smart contract is accessed **on-chain** (for example, by another smart contract) by sending a **message**. This type of message is called **internal**, hence the function name. Let's take a closer look at its parameters, especially the last two: `msgFull` and `msgBody`.
 
 - `msgFull` has the type `cell`. **Cells are data structures that can hold up to 1023 bits of information and have links to up to 4 other cells.** This allows for creating "trees" of cells, potentially storing as much data as you need. To read data from cells, you need to begin parsing them.
-- `msgBody` is a `slice`. **A slice is a representation of a cell that you can read data from.** It has a cursor that moves forward as you read data from the slice. Here, it's already set to the beginning of the message body—just what we will need very soon.
+- `msgBody` is a `slice`. **A slice is a representation of a cell that you can read data from.** It reads data bit by bit, and some methods (in particular, the one we will soon use) return the data that has been read and "subtract" it from the slice. This means that when you read data from it later, it will start from the bit following the last one you read. For example, if a slice contains `101110` and you read the first three bits (`101`), it will then contain only the last three bits: `110`.
 
 Your smart contract also has its own storage (**data**): a root cell stored in the so-called `c4` register (potentially having links to more cells if you need to store more than 1023 bits). Let's start by reading the data it consists of.
 
@@ -65,7 +65,7 @@ Add the following line inside the function:
 var dataSlice = getContractData().beginParse();
 ```
 
-**`var` means that this variable (`dataSlice`) is *mutable***, i.e., **it can (and will) be changed.** `getContractData()` reads the root cell in `c4` (it's still a `cell` at this point), and `beginParse()` makes it a `slice` we can read from. **This is exactly the reason we declared it as mutable: the cursor will move as we read data, mutating the variable.**
+**`var` means that this variable (`dataSlice`) is *mutable***, i.e., **it can (and will) be changed.** `getContractData()` reads the root cell in `c4` (it's still a `cell` at this point), and `beginParse()` makes it a `slice` we can read from. **This is exactly the reason we declared it as mutable: the slice will be modified as we read data, mutating the variable.**
 
 Now, add the following line of code below the previous one:
 
@@ -73,7 +73,7 @@ Now, add the following line of code below the previous one:
 var total = dataSlice.loadUint(64);
 ```
 
-**This variable is also mutable, but for a different reason: we will increase it by the value received in the message body.** Calling `loadUint(64)` on the slice we read in the first line of code makes the cursor in it start moving bit by bit, reading up to 64 bits (if available) and converting them to an *unsigned integer* (one that cannot be negative).
+**This variable is also mutable, but for a different reason: we will increase it by the value received in the message body.** Calling `loadUint(64)` on the slice we read in the first line of code makes it read data bit by bit, reading up to 64 bits (if available) and converting them to an *unsigned integer* (one that cannot be negative).
 
 > 64 bits means it can have a maximum value of 2 to the power of 64 minus one, which is a *very, very* large number (18 446 744 073 709 551 615). We need to subtract one since the first possible value is 0, not 1.
 
@@ -131,7 +131,7 @@ assert(msgBody.getRemainingBitsCount() >= 16, 9);
 
 Here are the details:
 - **Declare an `assert` with two arguments**: the condition and the exception code.
-- The **condition** is: “count the bits left in the message body and ensure the amount is 16 or more” (it doesn't move the slice's cursor).
+- The **condition** is: “count the bits left in the message body and ensure the amount is 16 or more” (this method doesn't modify the slice).
 - The **exception code** is **9**. You can choose any code you like, but it’s better to stick to conventions. This one can be found in the [TVM Whitepaper](https://ton-blockchain.github.io/docs/tvm.pdf) or the [TVM Exit Codes](https://docs.ton.org/v3/documentation/tvm/tvm-exit-codes) document and means **“Cell underflow. The read operation from slice primitive tried to read more bits or references than available.”**
 
 If the condition ("at least 16 bits in the message body") is not satisfied, the code execution stops immediately and an exception with the code 9 is thrown.
@@ -189,7 +189,7 @@ There should be no errors, but you can introduce some yourself to see how they l
 <details>
   <summary>Click to reveal the spoiler!</summary>
 
-> You will get an error pointing out that you're trying to modify the immutable variable `dataSlice` when reading the unsigned integer in the next line, consequently moving the slice's cursor.
+> You will get an error pointing out that you're trying to mutate the immutable variable `dataSlice` when reading the unsigned integer in the next line, consequently modifying the slice.
 
 </details>
 
