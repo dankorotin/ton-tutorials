@@ -130,7 +130,7 @@ it('should increase the total', async () => {
 
 Here's what happens here:
 1. We created another test case with the name `'should increase the total'` and a closure with the code to execute every time the test is run.
-2. The first lines calls the internal message handler function in the contract, sending `0.05` TON and the value to increment the counter by: `42n` (`n` means this number is a `BigInt`). The sender here is `deployer`, which is created before each test. As the contract is deployed with its stored value set to `0`, we then call the `get` method and expect it to return `42n` (`0 + 42`).
+2. The first line calls the internal message handler function in the contract, sending `0.05` TON and the value to increment the counter by: `42n` (`n` means this number is a `BigInt`). The sender here is `deployer`, which is created before each test. As the contract is deployed with its stored value set to `0`, we then call the `get` method and expect it to return `42n` (`0 + 42`).
 3. Then we introduce another sender (`johnDoe`) to ensure any contract can send messages to our contract, not just its deployer. The last two lines are similar to the first two, except the sender now is `johnDoe` and the number to increase the counter by is `1337n`. Before the message is handled, the total is `42n`, so we expect it to be `1379n` afterward (`42 + 1337`).
 
 Run the tests again, and you should see a similar result:
