@@ -31,11 +31,11 @@ export class Counter implements Contract {
 
     // Send a value to increment the one stored in the contract storage by.
     // It's stored in a newly created cell as a 16-bit unsigned integer.
-    async sendIncrement(provider: ContractProvider, via: Sender, value: bigint, incrementValue: bigint) {
+    async sendIncrement(provider: ContractProvider, via: Sender, value: bigint, incrementValue: bigint, bits: number = 16) {
         await provider.internal(via, {
             value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
-            body: beginCell().storeUint(incrementValue, 16).endCell(),
+            body: beginCell().storeUint(incrementValue, bits).endCell(),
         });
     }
 

@@ -45,4 +45,14 @@ describe('Counter', () => {
         await counter.sendIncrement(johnDoe.getSender(), toNano('0.05'), 1337n);
         expect(await counter.getTotal()).toEqual(1379n);
     });
+
+    it('should throw an exception if body is less than 16 bits long', async () => {
+        const callResult = await counter.sendIncrement(deployer.getSender(), toNano('0.05'), 42n, 15);
+        expect(callResult.transactions).toHaveTransaction({
+            from: deployer.address,
+            to: counter.address,
+            success: false,
+            exitCode: 9,
+        });
+    });
 });

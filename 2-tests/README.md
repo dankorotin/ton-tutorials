@@ -14,6 +14,8 @@ After writing, deploying, and “testing” (by sending messages) your first sma
 
 It may come as a surprise, but you already have a test generated for you! Navigate to the `tests` directory (this is where you will create all your test files) and open `Counter.spec.ts`. The amount of code there can be a bit overwhelming, so let's take a closer look at it before writing anything.
 
+## Deployment Test
+
 Below the imports, you will see the `describe` block. Sandbox uses [Jest](https://jestjs.io) for testing, and you can find the `describe` details [here](https://jestjs.io/docs/api#describename-fn). This block is purely optional but helps you organize your tests into groups.
 
 Inside the `describe` block, we have some variables and methods. Let's take a look at them in small chunks, starting with the first four lines of code:
@@ -63,10 +65,10 @@ Let's break it down:
 Now, let's take a look at the final lines of the file—the only test case:
 
 ```typescript
-    it('should deploy', async () => {
-        // the check is done inside beforeEach
-        // blockchain and counter are ready to use
-    });
+it('should deploy', async () => {
+    // the check is done inside beforeEach
+    // blockchain and counter are ready to use
+});
 ```
 
 `it(...` is a test case function with the following parameters: a name (`'should deploy'` in this case), an optional function (the one with the comments in it; you can omit it to make the test case pending and provide the implementation later, e.g., `it('should deploy');`), and an optional timeout (none here). Since the deployment result is checked before each test, this test case is empty.
@@ -144,6 +146,54 @@ Time:        1.652 s, estimated 2 s
 ```
 
 Now, two test cases were executed, and both succeeded. Let's add another one...
+
+## Testing the Assertion
+
+So far, we've only written tests for the intended behavior. Earlier in this tutorial, we manually triggered the `assert` in our contract by passing an insufficient number of bits to it. Now, it's time to write a test case for this scenario. The `assert` in the smart contract (`contracts/counter.tolk`) looks like this:
+
+```tolk
+assert(msgBody.getRemainingBitsCount() >= 16, 9);
+```
+
+It expects the message body to contain at least 16 bits and will throw an exception with code `9` if it doesn't. We need a way to send an internal message from the test suite with an altered body size. There are several ways to approach this task, but we'll use a straightforward approach by slightly modifying the `sendIncrement` method in the wrapper (`Counter.ts`).
+
+Open the file, find the function, and add one more parameter to it: `bits: number = 16`. Then, use this parameter inside the `body` construction code:
+
+```typescript
+async sendIncrement(provider: ContractProvider, via: Sender, value: bigint, incrementValue: bigint, bits: number = 16) {
+    await provider.internal(via, {
+        value,
+        sendMode: SendMode.PAY_GAS_SEPARATELY,
+        body: beginCell().storeUint(incrementValue, bits).endCell(),
+    });
+}
+```
+
+Let's take a closer look at the changes:
+1. The parameter we added has a **default value** of `16`, meaning you can omit it in calls, and `bits` will be initialized with this value.
+2. `storeUint(incrementValue, bits)` now uses `bits` to define its length instead of the hardcoded `16`.
+
+These changes won't affect the current tests, as `bits` will have the default value `16` in all calls (it's omitted everywhere this method is used). Now that we have control over the message body, let's add another test case to the `Counter.spec.ts`, just below the last one:
+
+```typescript
+it('should throw an exception if body is less than 16 bits long', async () => {
+    const callResult = await counter.sendIncrement(deployer.getSender(), toNano('0.05'), 42n, 15);
+    expect(callResult.transactions).toHaveTransaction({
+        from: deployer.address,
+        to: counter.address,
+        success: false,
+        exitCode: 9,
+    });
+});
+```
+
+As you can see, the call to `sendIncrement` now has one more argument: `15`. This will make the body 1 bit shorter than expected, triggering the `assert`. This is why the transaction is expected to have an `exitCode` with the value of `9`. Run the tests and ensure this case also reports success.
+
+## Testing Larger Values
+
+So far, we've tested expected scenarios where the value sent to the contract is within the expected bounds, as well as an erroneous scenario where there's not enough data to parse. There's one more group of scenarios left: those where a caller sends a value exceeding 16 bits in the message body. Let's cover these with tests, too.
+
+As the contract only uses first 16 bits of the data, we expect that the maximum value the counter is increased by is `2^16 - 1`, i.e. 65 535.
 
 ---
 
