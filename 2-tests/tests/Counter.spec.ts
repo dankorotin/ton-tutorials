@@ -55,4 +55,14 @@ describe('Counter', () => {
             exitCode: 9,
         });
     });
+
+    it('should increase the total by the correct amount when 17 bits of 65,536 are passed', async () => {
+        await counter.sendIncrement(deployer.getSender(), toNano('0.05'), 65536n, 17);
+        expect(await counter.getTotal()).toEqual(32768n);
+    });
+
+    it('should increase the total by the correct amount when 32 bits of 4,294,967,295 are passed', async () => {
+        await counter.sendIncrement(deployer.getSender(), toNano('0.05'), 4294967295n, 32);
+        expect(await counter.getTotal()).toEqual(65535n);
+    });
 });

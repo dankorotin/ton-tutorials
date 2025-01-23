@@ -388,4 +388,4 @@ Current total: 98387n
 
 Congratulations on finishing the first step of this exciting journey! 🥳
 
-Feel free to create issues and/or pull requests if you notice any mistakes, outdated code, or have some cool ideas. See you in the next tutorial! 👋
+See you in the [next tutorial](../2-tests/README.md)! 👋

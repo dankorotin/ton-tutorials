@@ -28,7 +28,7 @@ JetBrains IDEs (WebStorm, IDEA) [plugin](https://plugins.jetbrains.com/plugin/23
 
 ## 👶 Smart Contract Basics and Testing
 
-### 1. [Creating and Deploying a Smart Contract](1-create-and-deploy/README.md)
+### 1. [Creating and Deploying a Smart Contract](1-creation-and-deployment/README.md)
 
 Create and deploy a smart contract, and send messages.
 

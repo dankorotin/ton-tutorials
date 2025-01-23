@@ -2,7 +2,7 @@
 
 ## Before We Begin
 
-Here we assume that you followed the first tutorial ([Creating and Deploying a Smart Contract](../1-create-and-deploy/README.md)) and understand the concepts of messages, working with data, and the deployment process. If you don't, please follow the first tutorial and come back when you're comfortable with these concepts. This tutorial also uses the code from the previous one, so we suggest you copy it to a separate directory and work there.
+Here we assume that you followed the first tutorial ([Creating and Deploying a Smart Contract](../1-creation-and-deployment/README.md)) and understand the concepts of messages, working with data, and the deployment process. If you don't, please follow the first tutorial and come back when you're comfortable with these concepts. This tutorial also uses the code from the previous one, so we suggest you copy it to a separate directory and work there.
 
 ## Tutorial Goals
 
@@ -193,8 +193,48 @@ As you can see, the call to `sendIncrement` now has one more argument: `15`. Thi
 
 So far, we've tested expected scenarios where the value sent to the contract is within the expected bounds, as well as an erroneous scenario where there's not enough data to parse. There's one more group of scenarios left: those where a caller sends a value exceeding 16 bits in the message body. Let's cover these with tests, too.
 
-As the contract only uses first 16 bits of the data, we expect that the maximum value the counter is increased by is `2^16 - 1`, i.e. 65 535.
+As the contract only uses the first 16 bits of the data, we expect that the maximum value the counter is increased by is `2^16 - 1`, i.e., 65,535, regardless of the value sent.
 
----
+Create one more test case, and let's fill it with the code step by step to better understand what's going on:
 
-# 🚧 Work In Progress 🚧
+```typescript
+it('should increase the total by the correct amount when 17 bits of 65,536 are passed', async () => {
+    const largeValue: bigint = 65536n;
+    console.log(largeValue.toString(2));
+});
+```
+
+Here, we initialize the `largeValue` variable with a value just 1 above the maximum value we expect the total to increase by. If you run the tests now, you will see its binary representation (logged to the console in the second line of code):
+
+```
+...
+  console.log
+    10000000000000000
+...
+```
+
+The binary representation of 65,536 is `1` followed by sixteen `0`s. Let's pass it as 17 bits inside the message body. Add the following lines to the test case:
+
+```typescript
+await counter.sendIncrement(deployer.getSender(), toNano('0.05'), largeValue, 17);
+expect(await counter.getTotal()).toEqual(32768n);
+```
+
+Why do we expect the total to increase by 32,768 (it was 0 before we sent the message), not 65,535 (the maximum increase value) or 65,536 (the value we sent)? The reason is that we sent 17 bits to the contract: `10000000000000000`. It read only the first 16: `1000000000000000` (`1` followed by fifteen `0`s). And this is the binary representation of 32,768!
+
+Now, let's send a larger value to it, with the binary representation of all `1`s. Say, `2^32 - 1`, which is 4,294,967,295 (the largest 32-bit unsigned integer) and represented in binary as `11111111111111111111111111111111` (thirty-two `1`s).
+
+Add yet another test case with the following code:
+
+```typescript
+it('should increase the total by the correct amount when 32 bits of 4,294,967,295 are passed', async () => {
+    await counter.sendIncrement(deployer.getSender(), toNano('0.05'), 4294967295n, 32);
+    expect(await counter.getTotal()).toEqual(65535n);
+});
+```
+
+Here, we send 32 `1`s, of which only the first 16 are used. This is the binary representation of 65,535 (the largest 16-bit unsigned integer). As you can see, even very large values can't violate the limitation we've set by restricting the amount to increase the total to 16 bits of data.
+
+## Wrapping Up
+
+You made it! Now you have a very important tool in your skill set: automated testing. It will not only save you a ton of time testing your contracts' logic but also help you write better code with more confidence. In the next tutorial, we'll explore this further as we employ the power of Test-Driven Development!
