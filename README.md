@@ -24,8 +24,6 @@ I'd suggest [WebStorm](https://www.jetbrains.com/webstorm/) (it's the one I'm us
 
 JetBrains IDEs (WebStorm, IDEA) [plugin](https://plugins.jetbrains.com/plugin/23382-ton) or VS Code [extension](https://marketplace.visualstudio.com/items?itemName=ton-core.tolk-vscode).
 
-> ...And you're ready to rock! 🤘
-
 # 👶 Smart Contract Basics and Testing
 
 ### 1. [Creating and Deploying a Smart Contract](1-creation-and-deployment/README.md)
