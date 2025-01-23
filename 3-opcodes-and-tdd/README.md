@@ -30,3 +30,25 @@ For now, let's focus on the opcodes. There are [expectations](https://docs.ton.o
 4. If the `op` is anything else, throw an exception.
 
 ## Test-Driven Development
+
+In the previous tutorials, we wrote the code *before* testing it. Now, we will reverse the order and start with the tests. The goal is to have them "red" (i.e., failing) in the beginning and gradually make them all "green" (i.e., passing). This approach forces the developer to write only the necessary, testable code.
+
+The (*only?*) drawback here is that it makes the process of software development somewhat longer. But in return, you will (*most likely*) get cleaner code that is guaranteed to work as intended (*if you covered all of the scenarios, of course* 😉). You will also be (*almost*) sure that if you introduce new behavior and it breaks something in the existing one, the tests will let you know.
+
+> If you want, you can run `npx blueprint test` in the console (make sure you're in the project's directory) to ensure all tests are currently "green."
+
+Open the file containing the tests (`tests/Counter.spec.ts`) and take a look at the existing test cases. The first one, named `'should deploy'`, contains no code, as the contract is deployed before each test in the `beforeEach` method. So it's there just in case deployment fails. We want our deployment message to trigger the first scenario of today's plan by sending an empty body (no opcode at all, and it shouldn't increment the total value).
+
+Open the contract wrapper (`wrappers/Counter.ts`) and find the function responsible for deployment:
+
+```typescript
+async sendDeploy(provider: ContractProvider, via: Sender, value: bigint) {
+    await provider.internal(via, {
+        value,
+        sendMode: SendMode.PAY_GAS_SEPARATELY,
+        body: beginCell().storeUint(0, 16).endCell(),
+    });
+}
+```
+
+To send a message with an empty `body`, simply remove the `storeUint(0, 16)` part so that an empty cell is passed to it: `beginCell().endCell()` (here, you create a builder, don’t pass any data to it, and finalize the cell, passing it to the `body` parameter). The contract expects the body to contain at least 16 bits of data; otherwise, it throws an exception, so all of the tests will fail. Run them to ensure they do.
