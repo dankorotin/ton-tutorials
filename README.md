@@ -4,27 +4,7 @@ Tolk is a smart contract development language for The Open Network (TON) blockch
 
 These tutorials reflect my journey into the depths of smart contract development for TON. Each one is a step-by-step guide, with code extensively commented in key areas to provide context and details. Welcome aboard! 🏴‍☠️
 
-## Before We Begin
-
-### 1. Install Node.js
-
-> (Skip this step if you already have it installed. Just make sure it's version 18 or later.)
-
-On a Mac with [Homebrew](https://brew.sh):
-```
-brew install node
-```
-Otherwise: [download the installer](https://nodejs.org/en) from the official site.
-
-### 2. Choose an IDE
-
-I'd suggest [WebStorm](https://www.jetbrains.com/webstorm/) (it's the one I'm using, free for non-commercial use) or [Visual Studio Code](https://code.visualstudio.com) (free).
-
-### 3. Add the Plugin/Extension for Tolk.
-
-JetBrains IDEs (WebStorm, IDEA) [plugin](https://plugins.jetbrains.com/plugin/23382-ton) or VS Code [extension](https://marketplace.visualstudio.com/items?itemName=ton-core.tolk-vscode).
-
-# 👶 Smart Contract Basics and Testing
+## 👶 Smart Contract Basics and Testing
 
 ### 1. [Creating and Deploying a Smart Contract](1-creation-and-deployment/README.md)
 

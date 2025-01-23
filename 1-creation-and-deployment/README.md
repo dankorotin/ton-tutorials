@@ -1,5 +1,25 @@
 # Creating and Deploying a Smart Contract
 
+## Before We Begin
+
+### 1. Install Node.js
+
+> (Skip this step if you already have it installed. Just make sure it's version 18 or later.)
+
+On a Mac with [Homebrew](https://brew.sh):
+```
+brew install node
+```
+Otherwise: [download the installer](https://nodejs.org/en) from the official site.
+
+### 2. Choose an IDE
+
+I'd suggest [WebStorm](https://www.jetbrains.com/webstorm/) (it's the one I'm using, free for non-commercial use) or [Visual Studio Code](https://code.visualstudio.com) (free).
+
+### 3. Add the Plugin/Extension for Tolk.
+
+JetBrains IDEs (WebStorm, IDEA) [plugin](https://plugins.jetbrains.com/plugin/23382-ton) or VS Code [extension](https://marketplace.visualstudio.com/items?itemName=ton-core.tolk-vscode).
+
 ## Basic Concepts
 
 A **smart contract** is a program running on the TON Blockchain via its [TVM](https://docs.ton.org/v3/documentation/tvm/tvm-overview) (TON Virtual Machine). It consists of **code** (TVM instructions) and **data** (persistent state) stored at a specific **address**. It also has a **balance**: some amount of currency used to pay for its existence and computations.
