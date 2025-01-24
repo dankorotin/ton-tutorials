@@ -45,15 +45,10 @@ Then, above the `sendIncrement` function inside the `Counter` class, add this fu
 
 ```typescript
 async sendSimpleMessage(provider: ContractProvider, via: Sender, value: bigint, messageLength: number) {
-    let slice = beginCell().storeUint(Opcode.MESSAGE, 32)
-    if (messageLength > 0) {
-        slice.storeUint(0, messageLength);
-    }
-    const body = slice.endCell()
     await provider.internal(via, {
         value,
         sendMode: SendMode.PAY_GAS_SEPARATELY,
-        body: body,
+        body: beginCell().storeUint(Opcode.MESSAGE, 32).storeUint(0, messageLength).endCell(),
     });
 }
 ```
@@ -191,7 +186,7 @@ if (op == OP_INCREASE) {
 This is exactly the code we used in the contract before to increase the total value stored! All of the tests will now pass, but we need to add another one: we lack the check for the number of bits left to parse in `msgBody`. Add the test case for it:
 
 ```typescript
-    it('should throw if cannot parse the increment value', async () => {
+it('should throw if cannot parse the increment value', async () => {
     const messageResult = await counter.sendIncrement(deployer.getSender(), toNano('0.05'), 42n, 15);
     expect(messageResult.transactions).toHaveTransaction({
         from: deployer.address,

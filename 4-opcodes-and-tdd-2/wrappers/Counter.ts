@@ -42,15 +42,10 @@ export class Counter implements Contract {
     }
 
     async sendSimpleMessage(provider: ContractProvider, via: Sender, value: bigint, messageLength: number) {
-        let slice = beginCell().storeUint(Opcode.MESSAGE, 32)
-        if (messageLength > 0) {
-            slice.storeUint(0, messageLength);
-        }
-        const body = slice.endCell()
         await provider.internal(via, {
             value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
-            body: body,
+            body: beginCell().storeUint(Opcode.MESSAGE, 32).storeUint(0, messageLength).endCell(),
         });
     }
 
