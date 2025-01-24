@@ -19,6 +19,25 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
         return;
     }
 
+    if (op == OP_INCREASE) {
+        assert(msgBody.getRemainingBitsCount() >= 16, 101);
+
+        var dataSlice = getContractData().beginParse();
+        var total = dataSlice.loadUint(64);
+        val toAdd = msgBody.loadUint(16);
+        total += toAdd;
+        var cellBuilder = beginCell();
+        cellBuilder.storeUint(total, 64);
+        val finalizedCell = cellBuilder.endCell();
+        setContractData(finalizedCell);
+        return;
+    }
+
+    if (op == OP_RESET) {
+        setContractData(beginCell().storeUint(0, 64).endCell());
+        return;
+    }
+
     throw 0xffff;
 }
 

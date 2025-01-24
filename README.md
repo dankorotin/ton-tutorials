@@ -18,6 +18,10 @@ Test your smart contract logic with Sandbox.
 
 Alter your smart contract behavior based on operation codes and get acquainted with test-driven development (TDD).
 
+### 4. [Opcodes and Test-Driven Development, Part 2](4-opcodes-and-tdd-2/README.md)
+
+Use TDD to implement and test the intended behavior while handling edge cases.
+
 ---
 
 ### ✍️ Feedback

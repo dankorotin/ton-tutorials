@@ -58,7 +58,7 @@ export class Counter implements Contract {
         await provider.internal(via, {
             value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
-            body: beginCell().storeUint(incrementValue, bits).endCell(),
+            body: beginCell().storeUint(Opcode.INCREASE, 32).storeUint(incrementValue, bits).endCell(),
         });
     }
 

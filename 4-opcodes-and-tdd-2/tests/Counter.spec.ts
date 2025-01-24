@@ -1,6 +1,6 @@
 import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
 import { Cell, toNano } from '@ton/core';
-import { Counter } from '../wrappers/Counter';
+import { Counter, Opcode } from '../wrappers/Counter';
 import '@ton/test-utils';
 import { compile } from '@ton/blueprint';
 
@@ -54,7 +54,7 @@ describe('Counter', () => {
         });
     });
 
-    it('should properly handle the simple message opcode', async () => {
+    it('should properly handle the simple message', async () => {
         const messageResult = await counter.sendSimpleMessage(deployer.getSender(), toNano('0.05'), 8);
         expect(messageResult.transactions).toHaveTransaction({
             from: deployer.address,
@@ -94,5 +94,24 @@ describe('Counter', () => {
     it('should increase the total by the correct amount when 32 bits of 4,294,967,295 are passed', async () => {
         await counter.sendIncrement(deployer.getSender(), toNano('0.05'), 4294967295n, 32);
         expect(await counter.getTotal()).toEqual(65535n);
+    });
+
+    it('should throw if cannot parse the increment value', async () => {
+        const messageResult = await counter.sendIncrement(deployer.getSender(), toNano('0.05'), 42n, 15);
+        expect(messageResult.transactions).toHaveTransaction({
+            from: deployer.address,
+            to: counter.address,
+            success: false,
+            exitCode: 101,
+        });
+        expect(await counter.getTotal()).toEqual(0n);
+    });
+
+    it('should reset', async () => {
+        await counter.sendIncrement(deployer.getSender(), toNano('0.05'), 42n);
+        expect(await counter.getTotal()).toEqual(42n);
+
+        await counter.sendOpcode(deployer.getSender(), toNano('0.05'), Opcode.RESET);
+        expect(await counter.getTotal()).toEqual(0n);
     });
 });
