@@ -64,6 +64,17 @@ describe('Counter', () => {
         expect(await counter.getTotal()).toEqual(0n);
     });
 
+    it('should throw if a simple message has no data', async () => {
+        const messageResult = await counter.sendSimpleMessage(deployer.getSender(), toNano('0.05'), 0);
+        expect(messageResult.transactions).toHaveTransaction({
+            from: deployer.address,
+            to: counter.address,
+            success: false,
+            exitCode: 100,
+        });
+        expect(await counter.getTotal()).toEqual(0n);
+    });
+
     it('should increase the total', async () => {
         await counter.sendIncrement(deployer.getSender(), toNano('0.05'), 42n);
         expect(await counter.getTotal()).toEqual(42n);

@@ -15,6 +15,7 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
     val op = msgBody.loadMessageOp();
 
     if (op == OP_MESSAGE) {
+        assert(msgBody.getRemainingBitsCount() > 0, 100);
         return;
     }
 

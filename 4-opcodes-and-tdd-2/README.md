@@ -109,3 +109,25 @@ We've added `op` constants to the contract as well to avoid mistakes from using 
 
 But what about a simple message *without* data? Let's add a test case to check if it fails (as it should):
 
+```typescript
+    it('should throw if a simple message has no data', async () => {
+    const messageResult = await counter.sendSimpleMessage(deployer.getSender(), toNano('0.05'), 0);
+    expect(messageResult.transactions).toHaveTransaction({
+        from: deployer.address,
+        to: counter.address,
+        success: false,
+        exitCode: 100,
+    });
+    expect(await counter.getTotal()).toEqual(0n);
+});
+```
+
+Here, we pass `0` for the data length parameter and expect the contract to throw an exception with the code `100`. We've chosen this value as it's outside the convention bounds for TVM exit codes, and we need distinct exception values to know exactly what went wrong. You may have already guessed that the test will fail, as there's no check for the data length yet, so this message is treated as valid by the contract.
+
+Add the following assert to the contract code to finish implementing the "simple message" logic and make the test pass:
+
+```tolk
+...
+
+...
+```
