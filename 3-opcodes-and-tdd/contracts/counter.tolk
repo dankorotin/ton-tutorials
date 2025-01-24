@@ -1,14 +1,11 @@
 fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: slice) {
-    assert(msgBody.getRemainingBitsCount() >= 16, 9);
+    val bodyBitsCount = msgBody.getRemainingBitsCount();
 
-    var dataSlice = getContractData().beginParse();
-    var total = dataSlice.loadUint(64);
-    val toAdd = msgBody.loadUint(16);
-    total += toAdd;
-    var cellBuilder = beginCell();
-    cellBuilder.storeUint(total, 64);
-    val finalizedCell = cellBuilder.endCell();
-    setContractData(finalizedCell);
+    if (bodyBitsCount == 0) {
+        return;
+    }
+
+    assert(bodyBitsCount >= 32, 9);
 }
 
 get fun total() {

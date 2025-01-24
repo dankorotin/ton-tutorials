@@ -31,8 +31,17 @@ describe('Counter', () => {
     });
 
     it('should deploy', async () => {
-        // the check is done inside beforeEach
-        // blockchain and counter are ready to use
+        expect(await counter.getTotal()).toEqual(0n);
+    });
+
+    it('should throw an exception if cannot parse an opcode', async () => {
+        const callResult = await counter.sendOpcode(deployer.getSender(), toNano('0.05'), 1000, 28);
+        expect(callResult.transactions).toHaveTransaction({
+            from: deployer.address,
+            to: counter.address,
+            success: false,
+            exitCode: 9,
+        });
     });
 
     it('should increase the total', async () => {
@@ -44,16 +53,6 @@ describe('Counter', () => {
         const johnDoe = await blockchain.treasury('johndoe');
         await counter.sendIncrement(johnDoe.getSender(), toNano('0.05'), 1337n);
         expect(await counter.getTotal()).toEqual(1379n);
-    });
-
-    it('should throw an exception if body is less than 16 bits long', async () => {
-        const callResult = await counter.sendIncrement(deployer.getSender(), toNano('0.05'), 42n, 15);
-        expect(callResult.transactions).toHaveTransaction({
-            from: deployer.address,
-            to: counter.address,
-            success: false,
-            exitCode: 9,
-        });
     });
 
     it('should increase the total by the correct amount when 17 bits of 65,536 are passed', async () => {
