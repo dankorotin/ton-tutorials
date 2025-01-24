@@ -54,6 +54,16 @@ describe('Counter', () => {
         });
     });
 
+    it('should properly handle the simple message opcode', async () => {
+        const messageResult = await counter.sendSimpleMessage(deployer.getSender(), toNano('0.05'), 8);
+        expect(messageResult.transactions).toHaveTransaction({
+            from: deployer.address,
+            to: counter.address,
+            success: true,
+        });
+        expect(await counter.getTotal()).toEqual(0n);
+    });
+
     it('should increase the total', async () => {
         await counter.sendIncrement(deployer.getSender(), toNano('0.05'), 42n);
         expect(await counter.getTotal()).toEqual(42n);

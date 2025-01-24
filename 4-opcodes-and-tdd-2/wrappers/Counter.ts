@@ -6,6 +6,12 @@ export function counterConfigToCell(config: CounterConfig): Cell {
     return beginCell().storeUint(0, 64).endCell();
 }
 
+export const Opcode = {
+    MESSAGE: 0,
+    INCREASE: 1,
+    RESET: 2
+};
+
 export class Counter implements Contract {
     constructor(readonly address: Address, readonly init?: { code: Cell; data: Cell }) {}
 
@@ -32,6 +38,19 @@ export class Counter implements Contract {
             value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: beginCell().storeUint(opcode, bits).endCell(),
+        });
+    }
+
+    async sendSimpleMessage(provider: ContractProvider, via: Sender, value: bigint, messageLength: number) {
+        let slice = beginCell().storeUint(Opcode.MESSAGE, 32)
+        if (messageLength > 0) {
+            slice.storeUint(0, messageLength);
+        }
+        const body = slice.endCell()
+        await provider.internal(via, {
+            value,
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+            body: body,
         });
     }
 
