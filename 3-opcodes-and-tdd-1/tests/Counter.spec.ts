@@ -44,6 +44,16 @@ describe('Counter', () => {
         });
     });
 
+    it('should throw an exception if cannot handle an opcode', async () => {
+        const callResult = await counter.sendOpcode(deployer.getSender(), toNano('0.05'), 1000);
+        expect(callResult.transactions).toHaveTransaction({
+            from: deployer.address,
+            to: counter.address,
+            success: false,
+            exitCode: 65535,
+        });
+    });
+
     it('should increase the total', async () => {
         await counter.sendIncrement(deployer.getSender(), toNano('0.05'), 42n);
         expect(await counter.getTotal()).toEqual(42n);

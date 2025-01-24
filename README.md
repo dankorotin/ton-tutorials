@@ -14,6 +14,10 @@ Create and deploy a smart contract, and send messages.
 
 Test your smart contract logic with Sandbox.
 
+### 3. [Opcodes and Test-Driven Development, Part 1](3-opcodes-and-tdd-1/README.md)
+
+Alter your smart contract behavior based on operation codes and get acquainted with test-driven development (TDD).
+
 ---
 
 ### ✍️ Feedback

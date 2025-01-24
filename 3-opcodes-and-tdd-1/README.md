@@ -1,4 +1,4 @@
-# Opcodes and Test-Driven Development
+# Opcodes and Test-Driven Development, Part 1
 
 ## Before We Begin
 
@@ -77,9 +77,9 @@ Run the tests again, and now the first one will pass. Why? Because there's no lo
 
 ### Preparing to Handle Opcodes
 
-The contract logic we outlined at the beginning of this tutorial imposes the following restrictions on the data it receives: the body should contain either no data at all or at least 16 bits to be parsed as an opcode. To cover these conditions, the contract will need to perform the following:
+The contract logic we outlined at the beginning of this tutorial imposes the following restrictions on the data it receives: the body should contain either no data at all or at least 32 bits to be parsed as an opcode. To cover these conditions, the contract will need to perform the following:
 1. Get the length of the message body in bits.
-2. Check if it's either 0 (in which case, return without any further code execution) or greater than or equal to 16 (throw an exception if not).
+2. Check if it's either 0 (in which case, return without any further code execution) or greater than or equal to 32 (throw an exception if not).
 3. Parse and handle the opcode, if possible.
 
 This means we need to add two more test cases (the empty body is already covered by `'should deploy'`, and if we break anything, it will fail). The first one will expect the contract to throw an exception if an opcode cannot be parsed. Add it below the `'should deploy'` case:
@@ -137,3 +137,64 @@ First, we read the message size in bits. Then we either return if it's `0` (with
 In fact, now *three* tests pass, as the one named `'should throw an exception if body is less than 16 bits long'` also triggers the same check in the contract. We don't need this test case anymore, so just remove it.
 
 ### Handling an Unsupported Opcode
+
+Before we get to testing and adding the supported opcodes logic, let's first handle the last scenario we outlined earlier: an unsupported opcode. This refers to an opcode that *can* be parsed but *cannot* trigger any logic in the smart contract. We already have the method to send such an opcode, so add another test case below the previous one:
+
+```typescript
+it('should throw an exception if cannot handle an opcode', async () => {
+    const callResult = await counter.sendOpcode(deployer.getSender(), toNano('0.05'), 1000);
+    expect(callResult.transactions).toHaveTransaction({
+        from: deployer.address,
+        to: counter.address,
+        success: false,
+        exitCode: 65535,
+    });
+});
+```
+
+Here, we again pass the opcode `1000`, omitting the length in bits as it defaults to `32`, and expect the contract to throw an exception with code `65535`. This code is often used to indicate that the received opcode is unknown to the contract (see more details on the TVM exit codes [here](https://docs.ton.org/v3/documentation/tvm/tvm-exit-codes)).
+
+This test, of course, will fail, as the contract doesn't yet throw the exception for this case. Open the contract and add the following line below the existing code in the `onInternalMessage` function:
+
+```tolk
+throw 0xffff;
+```
+
+`0xffff` is the hexadecimal representation of `65535` (you can use the decimal value if you prefer). Run the tests, and this case will turn "green":
+
+```
+ FAIL  tests/Counter.spec.ts
+  Counter
+    ✓ should deploy (182 ms)
+    ✓ should throw an exception if cannot parse an opcode (82 ms)
+    ✓ should throw an exception if cannot handle an opcode (83 ms)
+    ✕ should increase the total (91 ms)
+    ✕ should increase the total by the correct amount when 17 bits of 65,536 are passed (89 ms)
+    ✕ should increase the total by the correct amount when 32 bits of 4,294,967,295 are passed (85 ms)
+```
+
+## Wrapping Up
+
+Your smart contract should look like this now:
+
+```tolk
+fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: slice) {
+    val bodyBitsCount = msgBody.getRemainingBitsCount();
+
+    if (bodyBitsCount == 0) {
+        return;
+    }
+
+    assert(bodyBitsCount >= 32, 9);
+
+    throw 0xffff;
+}
+
+get fun total() {
+    return getContractData().beginParse().loadUint(64);
+}
+```
+
+You can also compare the tests and the wrapper to your implementation by taking a look at `tests/Counter.spec.ts` and `wrappers/Counter.ts` in this tutorial's files.
+
+So far, we've covered 3 out of 6 scenarios outlined at the beginning of the tutorial, and it's been a rather long journey, so we'll split this one into two parts. In the next one, we'll finally handle the valid opcodes!

@@ -6,6 +6,8 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
     }
 
     assert(bodyBitsCount >= 32, 9);
+
+    throw 0xffff;
 }
 
 get fun total() {
