@@ -124,10 +124,28 @@ But what about a simple message *without* data? Let's add a test case to check i
 
 Here, we pass `0` for the data length parameter and expect the contract to throw an exception with the code `100`. We've chosen this value as it's outside the convention bounds for TVM exit codes, and we need distinct exception values to know exactly what went wrong. You may have already guessed that the test will fail, as there's no check for the data length yet, so this message is treated as valid by the contract.
 
-Add the following assert to the contract code to finish implementing the "simple message" logic and make the test pass:
+Add the following `assert` to the contract code to finish implementing the "simple message" logic and make the test pass:
 
 ```tolk
 ...
-
+if (op == OP_MESSAGE) {
+    assert(msgBody.getRemainingBitsCount() > 0, 100);
+    return;
+}
 ...
+```
+
+The only line added here is `assert(msgBody.getRemainingBitsCount() > 0, 100);`, which simply throws an exception with the code `100` if there's no data left in the message body. We don't read the data here, as handling the actual message comments is outside the scope of this tutorial.
+
+Run the tests, and ensure both simple message ones are now "green":
+
+```
+✓ should deploy (180 ms)
+✓ should throw an exception if cannot parse an opcode (87 ms)
+✓ should throw an exception if cannot handle an opcode (99 ms)
+✓ should properly handle the simple message opcode (94 ms)
+✓ should throw if a simple message has no data (90 ms)
+✕ should increase the total (98 ms)
+✕ should increase the total by the correct amount when 17 bits of 65,536 are passed (93 ms)
+✕ should increase the total by the correct amount when 32 bits of 4,294,967,295 are passed (86 ms)
 ```
