@@ -30,7 +30,7 @@ Smart contracts on TON interact only by sending and receiving **messages** (unli
 
 ## Tutorial Goals
 
-In this tutorial, we'll create a simple **counter contract**, deploy it to the testnet, and increase and query the current total value. The logic will be very basic: it increments a counter by a specified number from an **internal message** and saves the total in its persistent data.
+In this tutorial, we'll create a simple **counter contract**, deploy it to testnet, and increase and query the current total value. The logic will be very basic: it increments a counter by a specified number from an **internal message** and saves the total in its persistent data.
 
 > **Internal messages** are those sent between blockchain entities and cannot be sent from off-chain. **These methods consume gas** (blockchain currency paid for transactions, code execution, and storage).
 
@@ -217,7 +217,7 @@ There should be no errors, but you can introduce some yourself to see how they l
 
 Your first contract is ready to be deployed to a real blockchain! There's one made specifically for testing purposes: [testnet](https://docs.ton.org/v3/documentation/smart-contracts/getting-started/testnet). It's very similar to the "real" TON blockchain, but the currency here has no real-world value, and the data can be wiped at any moment. Other than that, there's no difference, so your smart contracts will behave just as they would on the production chain.
 
-The first step is to get some test TON from the test faucet: [Testgiver TON Bot](https://t.me/testgiver_ton_bot). You will need a wallet on the testnet to receive and spend the test TON; an app like Tonkeeper will allow you to use one. Alternatively, you can use the web-based wallet [here](https://wallet.ton.org/?testnet=true).
+The first step is to get some test TON from the test faucet: [Testgiver TON Bot](https://t.me/testgiver_ton_bot). You will need a wallet on testnet to receive and spend the test TON; an app like Tonkeeper will allow you to use one. Alternatively, you can use the web-based wallet [here](https://wallet.ton.org/?testnet=true).
 
 > **Tip:** If you're stuck at any step, refer to [this document](https://docs.ton.org/v3/documentation/smart-contracts/getting-started/testnet). It includes helpful links and detailed explanations about the test network, wallets, and more.
 

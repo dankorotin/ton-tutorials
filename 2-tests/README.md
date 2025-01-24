@@ -239,4 +239,4 @@ Here, we send 32 `1`s, of which only the first 16 are used. This is the binary r
 
 ## Wrapping Up
 
-You made it! Now you have a very important tool in your skill set: automated testing. It will not only save you a ton of time testing your contracts' logic but also help you write better code with more confidence. In the next tutorial, we'll explore this further as we employ the power of Test-Driven Development!
+You made it! Now you have a very important tool in your skill set: automated testing. It will not only save you a ton of time testing your contracts' logic but also help you write better code with more confidence. In the [next tutorial](../3-opcodes-and-tdd-1/README.md), we'll explore this further as we employ the power of Test-Driven Development!
