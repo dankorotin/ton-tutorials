@@ -6,7 +6,7 @@ These tutorials reflect my journey into the depths of smart contract development
 
 # Tutorials
 
-## 👶 1. Smart Contract Basics and Testing
+## 👶 1. Basics and Testing
 
 ### 1.1. [Create and Deploy a Smart Contract](1-1-create-smart-contract/README.md)
 
@@ -23,6 +23,12 @@ Alter your smart contract's behavior with operation codes. Learn about exception
 ### 1.4. [Implement Conditional Logic, Part 2](1-4-opcodes-and-tdd-2/README.md)
 
 Use TDD to implement and test conditional behavior while handling edge cases.
+
+## 👦 2. Communication
+
+### 2.1. Addresses
+
+To send a message, you need to know the address. Gain an in-depth understanding of addresses on the TON Blockchain.
 
 ---
 
