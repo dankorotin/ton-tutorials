@@ -1,8 +1,10 @@
-# Creating and Deploying a Smart Contract
+# Create Your First Smart Contract
 
 ## Before We Begin
 
-### 1. Install Node.js
+Here are the steps required to follow this tutorial.
+
+**1. Install Node.js**
 
 > (Skip this step if you already have it installed. Just make sure it's version 18 or later.)
 
@@ -12,11 +14,11 @@ brew install node
 ```
 Otherwise: [download the installer](https://nodejs.org/en) from the official site.
 
-### 2. Choose an IDE
+**2. Choose an IDE**
 
 I'd suggest [WebStorm](https://www.jetbrains.com/webstorm/) (it's the one I'm using, free for non-commercial use) or [Visual Studio Code](https://code.visualstudio.com) (free).
 
-### 3. Add the Plugin/Extension for Tolk.
+**3. Add the Plugin/Extension for Tolk**
 
 JetBrains IDEs (WebStorm, IDEA) [plugin](https://plugins.jetbrains.com/plugin/23382-ton) or VS Code [extension](https://marketplace.visualstudio.com/items?itemName=ton-core.tolk-vscode).
 
@@ -408,4 +410,4 @@ Current total: 98387n
 
 Congratulations on finishing the first step of this exciting journey! 🥳
 
-See you in the [next tutorial](../2-tests/README.md)! 👋
+See you in the [next tutorial](../1-2-tests/README.md)! 👋

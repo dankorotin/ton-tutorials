@@ -2,7 +2,7 @@
 
 ## Before We Begin
 
-Here, we assume that you followed the previous part of this tutorial: [Opcodes and Test-Driven Development, Part 1](../3-opcodes-and-tdd-1/README.md).
+Here, we assume that you followed the previous part of this tutorial: [Opcodes and Test-Driven Development, Part 1](../1-3-opcodes-and-tdd-1/README.md).
 
 > **This tutorial uses the code from the previous one, so we suggest you copy it to a separate directory and work there**.
 

@@ -4,26 +4,28 @@ Tolk is a smart contract development language for The Open Network (TON) blockch
 
 These tutorials reflect my journey into the depths of smart contract development for TON. Each one is a step-by-step guide, with code extensively commented in key areas to provide context and details. Welcome aboard! 🏴‍☠️
 
-## 👶 Smart Contract Basics and Testing
+# Tutorials
 
-### 1. [Creating and Deploying a Smart Contract](1-creation-and-deployment/README.md)
+## 👶 1. Smart Contract Basics and Testing
 
-Create and deploy a smart contract, and send messages.
+### 1.1. [Create and Deploy a Smart Contract](1-1-create-smart-contract/README.md)
 
-### 2. [Testing Smart Contract Behavior](2-tests/README.md)
+Create and deploy a smart contract. Test its behavior with internal and `get` messages.
 
-Test your smart contract logic with Sandbox.
+### 1.2. [Test Smart Contract Behavior](1-2-tests/README.md)
 
-### 3. [Opcodes and Test-Driven Development, Part 1](3-opcodes-and-tdd-1/README.md)
+Explore automated smart contract testing using Sandbox.
 
-Alter your smart contract behavior based on operation codes and get acquainted with test-driven development (TDD).
+### 1.3. [Implement Conditional Logic, Part 1](1-3-opcodes-and-tdd-1/README.md)
 
-### 4. [Opcodes and Test-Driven Development, Part 2](4-opcodes-and-tdd-2/README.md)
+Alter your smart contract's behavior with operation codes. Learn about exceptions and Test-Driven Development (TDD).
 
-Use TDD to implement and test the intended behavior while handling edge cases.
+### 1.4. [Implement Conditional Logic, Part 2](1-4-opcodes-and-tdd-2/README.md)
+
+Use TDD to implement and test conditional behavior while handling edge cases.
 
 ---
 
-### ✍️ Feedback
+## ✍️ Feedback
 
-Feel free to create issues and/or pull requests; I'll do my best to review them ASAP.
+Feel free to create issues and/or pull requests.
