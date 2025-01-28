@@ -28,7 +28,7 @@ Use TDD to implement and test conditional behavior while handling edge cases.
 
 ### 2.1. Addresses
 
-To send a message, you need to know the address. Gain an in-depth understanding of addresses on the TON Blockchain.
+🚧 **Coming Soon!** 🚧 To send a message, you need to know the address. Gain an in-depth understanding of addresses on the TON Blockchain.
 
 ---
 
