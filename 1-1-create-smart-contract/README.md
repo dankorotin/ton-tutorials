@@ -221,7 +221,9 @@ Your first contract is ready to be deployed to a real blockchain! There's one ma
 
 The first step is to get some test TON from the test faucet: [Testgiver TON Bot](https://t.me/testgiver_ton_bot). You will need a wallet on testnet to receive and spend the test TON; an app like Tonkeeper will allow you to use one. Alternatively, you can use the web-based wallet [here](https://wallet.ton.org/?testnet=true).
 
-> **Tip:** If you're stuck at any step, refer to [this document](https://docs.ton.org/v3/documentation/smart-contracts/getting-started/testnet). It includes helpful links and detailed explanations about the test network, wallets, and more.
+> **Important!** Creating a test wallet can be a confusing step for newcomers. A great article can help you overcome this obstacle if you encounter it: [Step-by-Step Guide for Working with Your First TON Wallet](https://tonhelloworld.com/01-wallet/).
+
+> **Tip:** If you’re stuck at any step, refer to [this document](https://docs.ton.org/v3/documentation/smart-contracts/getting-started/testnet). It includes helpful information about the test network, wallets, and more.
 
 ### Wrappers
 
