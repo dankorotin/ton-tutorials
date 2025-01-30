@@ -51,10 +51,11 @@ describe('Client', () => {
         expect(contract.balance).toEqual(toNano(1));
     });
 
-    it('should be `active` after deploy', async () => {
+    it('should be `active` after deploy, with a positive balance', async () => {
         const address = client.address;
         const contract = await blockchain.getContract(address);
         expect(contract.accountState?.type).toEqual('active');
+        expect(contract.balance).toBeGreaterThan(0);
     });
 
     it('should reduce balance over time', async () => {

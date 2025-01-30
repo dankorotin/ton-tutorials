@@ -147,7 +147,7 @@ The tests will now pass:
 ```
  PASS  tests/Client.spec.ts
   Client
-    ✓ should be `uninit` without deploy [skip deploy] (72 ms)
+    ✓ should be `uninit` without deploy, with a zero balance [skip deploy] (72 ms)
 ```
 
 Now, let's see what happens when someone sends TON to an account in the `uninit` state. Copy the previous test, paste it below, and make a few modifications so that the new one looks like this:
@@ -185,17 +185,19 @@ Let's write another test to check the state of a deployed smart contract address
 Add the following code below the previous test case:
 
 ```typescript
-it('should be `active` after deploy', async () => {
+it('should be `active` after deploy, with a positive balance', async () => {
     const address = client.address;
     const contract = await blockchain.getContract(address);
     expect(contract.accountState?.type).toEqual('active');
+    expect(contract.balance).toBeGreaterThan(0);
 });
 ```
 
-It looks almost identical to the one above, with two key differences:
+It looks almost identical to the first one, with three key differences:
 
 1. Its name doesn't contain `[skip deploy]`.
 2. It expects the state to be `active`.
+3. It expects the balance to be greater than zero due to the deployment transaction, which includes some funds.
 
 Since there's no `[skip deploy]` instruction in the test name, the `beforeEach` function will execute the deployment steps, ensuring that both tests pass:
 
@@ -204,7 +206,7 @@ Since there's no `[skip deploy]` instruction in the test name, the `beforeEach` 
   Client
     ✓ should be `uninit` without deploy, with a zero balance [skip deploy] (171 ms)
     ✓ should be `uninit` without deploy, with a positive balance after a transaction [skip deploy] (80 ms)
-    ✓ should be `active` after deploy (77 ms)
+    ✓ should be `active` after deploy, with a positive balance (77 ms)
 
 ```
 
@@ -268,7 +270,7 @@ Run the tests once again and ensure all are "green":
   Client
     ✓ should be `uninit` without deploy, with a zero balance [skip deploy] (171 ms)
     ✓ should be `uninit` without deploy, with a positive balance after a transaction [skip deploy] (80 ms)
-    ✓ should be `active` after deploy (77 ms)
+    ✓ should be `active` after deploy, with a positive balance (77 ms)
     ✓ should reduce balance over time (87 ms)
 
 ```
