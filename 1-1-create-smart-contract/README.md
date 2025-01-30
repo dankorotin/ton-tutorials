@@ -1,4 +1,4 @@
-# Create Your First Smart Contract
+# Create and Deploy a Smart Contract
 
 ## Before We Begin
 
@@ -6,7 +6,7 @@ Here are the steps required to follow this tutorial.
 
 **1. Install Node.js**
 
-> (Skip this step if you already have it installed. Just make sure it's version 18 or later.)
+> **Tip:** (Skip this step if you already have it installed. Just make sure it's version 18 or later.)
 
 On a Mac with [Homebrew](https://brew.sh):
 ```
@@ -16,7 +16,7 @@ Otherwise: [download the installer](https://nodejs.org/en) from the official sit
 
 **2. Choose an IDE**
 
-I'd suggest [WebStorm](https://www.jetbrains.com/webstorm/) (it's the one I'm using, free for non-commercial use) or [Visual Studio Code](https://code.visualstudio.com) (free).
+We suggest [WebStorm](https://www.jetbrains.com/webstorm/) (it's the one we're using, free for non-commercial use) or [Visual Studio Code](https://code.visualstudio.com) (free).
 
 **3. Add the Plugin/Extension for Tolk**
 
@@ -28,7 +28,7 @@ A **smart contract** is a program running on the TON Blockchain via its [TVM](ht
 
 > The address is derived from the initial code and data, so it can be calculated prior to deployment. Moreover, if your code produces the exact same bytecode and data on deployment as another deployed contract, their addresses will be the same. You will most likely encounter this behavior if you don't change any significant parts of this tutorial's code: after deployment, you'll see that your "new" smart contract already has transactions and a non-zero total value.
 
-Smart contracts on TON interact only by sending and receiving **messages** (unlike in EVM-based chains, where calling other contracts can be done during the process of code execution). This pattern is called [Actor](https://docs.ton.org/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains#single-actor). The most important takeaway here is that there's no way to predict how long it will take a message from one actor (i.e., smart contract) to reach another, nor how long it will take for the response to arrive. However, the delivery of messages is strictly guaranteed.
+Smart contracts on TON interact only by sending and receiving **messages** (unlike in EVM-based chains, where calling other contracts can be done during the process of code execution). This pattern is called [Actor](https://docs.ton.org/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains#single-actor). The most important takeaway here is that **there's no way to predict how long it will take a message from one actor (i.e., smart contract) to reach another**, nor **how long it will take for the response to arrive**. However, **the delivery of messages is strictly guaranteed**.
 
 ## Tutorial Goals
 
@@ -95,9 +95,9 @@ Now, add the following line of code below the previous one:
 var total = dataSlice.loadUint(64);
 ```
 
-**This variable is also mutable, but for a different reason: we will increase it by the value received in the message body.** Calling `loadUint(64)` on the slice we read in the first line of code makes it read data bit by bit, reading up to 64 bits (if available) and converting them to an *unsigned integer* (one that cannot be negative).
+**This variable is also mutable, but for a different reason: we will increase it by the value received in the message body.** Calling `loadUint(64)` on the slice we read in the first line makes it process data bit by bit, reading up to **64 bits** (if available) and converting them to an *unsigned integer* (which cannot be negative).
 
-> 64 bits means it can have a maximum value of 2 to the power of 64 minus one, which is a *very, very* large number (18 446 744 073 709 551 615). We need to subtract one since the first possible value is 0, not 1.
+> **64 bits** means the maximum value is **2⁶⁴ - 1**—a *very, very* large number (**18,446,744,073,709,551,615**). We subtract one since the first possible value is **0**, not **1**.
 
 Finally, we get to reading the value passed in the message body. Add the following line:
 
@@ -107,7 +107,7 @@ val toAdd = msgBody.loadUint(16);
 
 **`val` here means that the `toAdd` variable is *immutable*, i.e., it will be initialized once and will not change.** `msgBody` is one of the function parameters we discussed above. It has the `slice` type, so we can read from it right away, unlike the contract data (a `cell`). **We expect the body to contain 16 bits of information that we treat as a 16-bit unsigned integer**, so we read it with `loadUint(16)` and assign it to `toAdd`.
 
-> A 16-bit unsigned integer can have a maximum value of 2 to the power of 16 minus one (65 535). You can choose to use more bits, of course (like 32 or even 64). The motivation behind using 16 bits is that it will take **a very long time to reach the maximum value of the counter** (the 64-bit unsigned integer stored in the contract's cell that we read from above).
+> A **16-bit unsigned integer** has a maximum value of **2¹⁶ - 1 (65,535)**. You can, of course, use more bits (such as **32** or even **64**). The reason for choosing **16 bits** is that it ensures **a very long time before the counter reaches its maximum value**—a **64-bit unsigned integer** stored in the contract’s cell, which we read earlier. Later, we’ll write tests to illustrate this concept.
 
 ## Increasing the Counter
 
@@ -121,7 +121,7 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
 }
 ```
 
-We've read all the **data** we need (the current **counter value**, stored in a mutable variable `total`, and the **value to add**, stored in the immutable one—`toAdd`. Let's increase the `total` and save it to the contract's persistent storage. Add the following lines to your existing code:
+We've read all the **data** we need (the current **counter value**, stored in a mutable variable `total`, and the **value to add**, stored in the immutable one—`toAdd`. Let's **increase the `total` and save it to the contract's persistent storage**. Add the following lines to your existing code:
 
 ```tolk
 total += toAdd;
@@ -143,7 +143,7 @@ Here's what happens here, step by step:
 
 By now, we have assumed that the internal messages the contract receives will contain valid data in the body (i.e., at least 16 bits of data that we will treat as a 16-bit integer). We can formalize this assumption as an **assertion** and **throw an exception** (i.e., halt the execution and return an error code) if the amount of data is not sufficient to proceed.
 
-> **Remember:** Any code execution on TVM costs **gas** (essentially, money). Thus, the earlier a faulty computation is **interrupted**, the less money you (or the function's caller) spend.
+> **Remember:** Any code execution on TVM costs **gas** (essentially, money). Thus, **the earlier a faulty computation is interrupted, the less money you** (or the function's caller) **spend**.
 
 Add this line of code at the very beginning of the function, above the line where we begin parsing the contract's data:
 
