@@ -31,10 +31,24 @@ describe('Client', () => {
         });
     });
 
-    it('should be `uninit` without deploy [skip deploy]', async () => {
+    it('should be `uninit` without deploy, with a zero balance [skip deploy]', async () => {
         const address = client.address;
         const contract = await blockchain.getContract(address);
         expect(contract.accountState?.type).toEqual('uninit');
+        expect(contract.balance).toEqual(0n);
+    });
+
+    it('should be `uninit` without deploy, with a positive balance after a transaction [skip deploy]', async () => {
+        const address = client.address;
+        await deployer.send({
+            to: address,
+            value: toNano(1),
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+            bounce: false
+        });
+        const contract = await blockchain.getContract(address);
+        expect(contract.accountState?.type).toEqual('uninit');
+        expect(contract.balance).toEqual(toNano(1));
     });
 
     it('should be `active` after deploy', async () => {
@@ -62,7 +76,7 @@ describe('Client', () => {
         // Send a message to trigger the storage fee payment.
         await deployer.send({
             to: address,
-            value: toNano('0'),
+            value: toNano(0),
             sendMode: SendMode.PAY_GAS_SEPARATELY,
         });
 

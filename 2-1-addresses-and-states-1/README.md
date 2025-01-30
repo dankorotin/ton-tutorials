@@ -95,14 +95,15 @@ It's empty because all of the deployment logic is inside the `beforeEach` functi
 Delete the comments inside the test case and update it to look like this (the test name has also been updated):
 
 ```typescript
-it('should be `uninit` without deploy [skip deploy]', async () => {
+it('should be `uninit` without deploy, with a zero balance [skip deploy]', async () => {
     const address = client.address;
     const contract = await blockchain.getContract(address);
     expect(contract.accountState?.type).toEqual('uninit');
+    expect(contract.balance).toEqual(0n);
 });
 ```
 
-Here, we obtain the `client` contract address (it's calculated from its code and state), retrieve the contract at that address from the test blockchain, and expect its state to be `uninit`.
+Here, we obtain the `client` contract address (it's calculated from its code and state), retrieve the contract at that address from the test blockchain, and expect its state to be `uninit`. We also expect the account balance to be 0, as no transactions have occurred yet.
 
 If you run the tests now by executing
 
@@ -142,6 +143,34 @@ The tests will now pass:
     ✓ should be `uninit` without deploy [skip deploy] (72 ms)
 ```
 
+Now, let's see what happens when someone sends TON to an account in the `uninit` state. Copy the previous test, paste it below, and make a few modifications so that the new one looks like this:
+
+```typescript
+it('should be `uninit` without deploy, with a positive balance after a transaction [skip deploy]', async () => {
+    const address = client.address;
+    await deployer.send({
+        to: address,
+        value: toNano(1),
+        sendMode: SendMode.PAY_GAS_SEPARATELY,
+        bounce: false
+    });
+    const contract = await blockchain.getContract(address);
+    expect(contract.accountState?.type).toEqual('uninit');
+    expect(contract.balance).toEqual(toNano(1));
+});
+```
+
+The difference here is that we send 1 TON to an `uninit` address (paying gas separately—i.e., from the sender's balance). The test expects the balance at the address to be exactly 1 TON (the balance is stored in nanotons, hence the `toNano` usage).
+
+Run the tests again, and they should both pass:
+
+```
+ PASS  tests/Client.spec.ts
+  Client
+    ✓ should be `uninit` without deploy, with a zero balance [skip deploy] (171 ms)
+    ✓ should be `uninit` without deploy, with a positive balance after a transaction [skip deploy] (80 ms)
+```
+
 ### `active` State
 
 Let's write another test to check the state of a deployed smart contract address.
@@ -166,8 +195,10 @@ Since there's no `[skip deploy]` instruction in the test name, the `beforeEach` 
 ```
  PASS  tests/Client.spec.ts
   Client
-    ✓ should be `uninit` without deploy [skip deploy] (161 ms)
-    ✓ should be `active` after deploy (83 ms)
+    ✓ should be `uninit` without deploy, with a zero balance [skip deploy] (171 ms)
+    ✓ should be `uninit` without deploy, with a positive balance after a transaction [skip deploy] (80 ms)
+    ✓ should be `active` after deploy (77 ms)
+
 ```
 
 ### `frozen` State
@@ -222,6 +253,18 @@ const deployResult = await client.sendDeploy(deployer.getSender(), toNano('0.000
 ```
 
 Run the tests again, and all should pass. If the last one doesn’t (e.g., due to changed fees in Sandbox), log the balance values to the console and check: it’s likely that you need to either reduce the amount of TON sent during deployment or increase the time elapsed on the test blockchain.
+
+Run the tests once again and ensure all are "green":
+
+```
+ PASS  tests/Client.spec.ts
+  Client
+    ✓ should be `uninit` without deploy, with a zero balance [skip deploy] (171 ms)
+    ✓ should be `uninit` without deploy, with a positive balance after a transaction [skip deploy] (80 ms)
+    ✓ should be `active` after deploy (77 ms)
+    ✓ should reduce balance over time (87 ms)
+
+```
 
 ## Wrapping Up
 
