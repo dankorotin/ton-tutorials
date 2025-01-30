@@ -71,15 +71,11 @@ As you probably remember from the earlier tutorials, we use Blueprint to create 
 
 Right now, we’re specifically interested in the tests. Unfortunately, we can't test for the `nonexist` state locally, as the `getContract` method in Sandbox *always* returns an instance of `SmartContract`, which has only the three other possible values in its `accountState.type`. In practice, the `nonexist` state represents the absence of any data at the address.
 
-However, you can generate a valid random TON account address by running this code (e.g., in one of your tests), then search for it in a blockchain explorer like Tonviewer to ensure it is in the `nonexist` state:
+However, you can generate a valid random TON account address by combining a workchain ID (e.g., `0`) with a random SHA-256 hash. Then, search for it in a blockchain explorer like Tonviewer to confirm that it is in the `nonexist` state.
 
-```typescript
-console.log(new Address(0, new Buffer("cbd5fedaafb6bf68024eb52d8d3a497c920cfe44cd269ed7e10126ef5a1d4466", "hex")).toRawString);
-```
+For example, the following address: `0:cbd5fedaafb6bf68024eb52d8d3a497c920cfe44cd269ed7e10126ef5a1d4466`. You can see that it has a `nonexist` state [here](https://tonviewer.com/EQDL1f7ar7a_aAJOtS2NOkl8kgz-RM0mntfhASbvWh1EZsK7).
 
-This code generates the following address: `0:cbd5fedaafb6bf68024eb52d8d3a497c920cfe44cd269ed7e10126ef5a1d4466`, and you can see that it has a `nonexist` state—there's indeed nothing at it [here](https://tonviewer.com/EQDL1f7ar7a_aAJOtS2NOkl8kgz-RM0mntfhASbvWh1EZsK7).
-
-> **Tip:** Replace the hash value (the first argument of the `Buffer` constructor above) with your own random SHA-256 hash, and you'll get a different address. It's *extremely unlikely* that you will generate the address of an existing contract.
+> **Tip:** Replace the hash value with your own random SHA-256 hash, and you'll get a different address. It's *extremely unlikely* that you will generate the address of an existing contract.
 
 > ⚠️ **Important!** You might have noticed that the address displayed in Tonviewer (or another service of your choice) is different: `EQDL1f7ar7a_aAJOtS2NOkl8kgz-RM0mntfhASbvWh1EZsK7` in this case. This is because it’s a *user-friendly* representation of the raw address. We will learn about these soon.
 
