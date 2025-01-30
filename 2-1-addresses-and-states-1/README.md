@@ -12,7 +12,7 @@ But first, we'll start with the essentials: what types of smart contract address
 
 ## Raw Address
 
-**Smart contract addresses on TON consist of two main components**: the **workchain ID** (a signed 32-bit integer) and the **account ID** (a 256-bit address for both of the currently existing chains).
+**Smart contract addresses on TON consist of two main components**: the **workchain ID** (a signed 32-bit integer) and the **account ID** (a 256-bit identifier, used in both existing chains).
 
 TON supports creating up to 2^32 **workchains** (i.e., separate blockchains), each of which can be subdivided into up to 2^60 **shards** (used to parallelize code execution). Currently, there are two workchains: Masterchain and Basechain.
 
@@ -36,7 +36,7 @@ The two parts we discussed above are written one after the other, separated by a
 
 ## Address States
 
-By now, you might be thinking: if a contract address can be calculated prior to deployment, does that mean messages can be sent to an empty address? Absolutely! In fact, this address will have **states** even before anything is deployed there. Moreover, it can even change state *after* a smart contract is deployed at that address.
+By now, you might be wondering: if a contract address can be calculated before deployment, can messages be sent to an empty address? Absolutely! In fact, **this address will have—and may change—its state even before anything is deployed there**. Moreover, it can continue to change *after* a smart contract is deployed at that address.
 
 Let's take a look at the possible state values:
 
