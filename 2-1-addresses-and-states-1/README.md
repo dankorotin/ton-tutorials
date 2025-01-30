@@ -199,7 +199,7 @@ It looks almost identical to the first one, with three key differences:
 2. It expects the state to be `active`.
 3. It expects the balance to be greater than zero due to the deployment transaction, which includes some funds.
 
-Since there's no `[skip deploy]` instruction in the test name, the `beforeEach` function will execute the deployment steps, ensuring that both tests pass:
+Since there's no `[skip deploy]` instruction in the test name, the `beforeEach` function will execute the deployment steps, ensuring that all tests pass:
 
 ```
  PASS  tests/Client.spec.ts
@@ -277,4 +277,4 @@ Run the tests once again and ensure all are "green":
 
 ## Wrapping Up
 
-So far, we've learned about raw contract addresses and account states. In the second part of this tutorial, we will explore user-friendly addresses, their differences, and their roles in smart contract behavior.
+So far, we've learned about **raw contract addresses** and **account states**. In the second part of this tutorial, we will explore **user-friendly addresses**, their differences, and their roles in smart contract behavior.
