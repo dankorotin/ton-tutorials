@@ -17,9 +17,7 @@ describe('Client', () => {
 
     beforeEach(async () => {
         blockchain = await Blockchain.create();
-
         client = blockchain.openContract(Client.createFromConfig({}, code));
-
         deployer = await blockchain.treasury('deployer');
 
         const deployResult = await client.sendDeploy(deployer.getSender(), toNano('0.05'));
@@ -32,8 +30,9 @@ describe('Client', () => {
         });
     });
 
-    it('should deploy', async () => {
-        // the check is done inside beforeEach
-        // blockchain and client are ready to use
+    it('should be `active` after deploy', async () => {
+        let address = client.address;
+        const contract = await blockchain.getContract(address);
+        expect(contract.accountState?.type).toEqual('active');
     });
 });

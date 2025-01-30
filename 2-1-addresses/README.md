@@ -2,7 +2,7 @@
 
 ## Before We Begin
 
-To understand and successfully complete this tutorial, you should be familiar with the basic concepts of the TON blockchain, such as smart contracts and messages. If you aren’t, we suggest completing the [Basics and Testing](../README.md#-1-basics-and-testing) section first.
+To understand and successfully complete this tutorial, you should be familiar with the basic concepts of the TON blockchain, such as smart contracts, messages, and automated testing. If you aren’t, we suggest completing the [Basics and Testing](../README.md#-1-basics-and-testing) section first.
 
 ## Tutorial Goals
 
@@ -44,3 +44,60 @@ Let's take a look at the possible state values:
 - `uninit`: The address has a balance and meta info but does not yet contain smart contract code or persistent data. It enters this state, for example, when it was in a `nonexist` state and another address sent tokens to it.
 - `active`: The address has smart contract code, persistent data, and balance. In this state, it can execute logic during transactions and modify its persistent data. An address enters this state when it was `uninit` and receives an incoming message with a `state_init` parameter.
 - `frozen`: The address cannot perform any operations. This state contains only two hashes of the previous state (code and state cells, respectively). When an address's storage fee exceeds its balance, it enters this state. There is a [project](https://unfreezer.ton.org) that can help unfreeze your contract if this happens, but the process can be challenging.
+
+### Address States in Practice
+
+Let's create a new project and use the Sandbox test framework to obtain smart contract addresses and their states, gaining a better understanding of what happens to them, why, and when.
+
+Navigate to your TON projects directory, open a terminal window, and run this:
+
+```bash
+npm create ton@latest
+```
+
+Name the project whatever you like (e.g., `client-server` or `addresses`). Set the first contract name to `Client` (we will add a `Server` later), and choose the option to create an empty contract in Tolk.
+
+Your input should look like this:
+
+```
+? Project name client-server
+? First created contract name (PascalCase) Client
+? Choose the project template An empty contract (Tolk)
+```
+
+As you probably remember from the earlier tutorials, we use Blueprint to create a project from a template. This template includes an empty contract (located at `contracts/client.tolk`), wrappers, scripts, and tests.
+
+### `active` State
+
+Right now, we’re specifically interested in the tests. Open `tests/Client.spec.ts` and take a look at the only test case there—the one named `'should deploy'`:
+
+```typescript
+it('should deploy', async () => {
+    // the check is done inside beforeEach
+    // blockchain and client are ready to use
+});
+```
+
+It's empty because all of the deployment logic is inside the `beforeEach` function. By the time the test runs, our contract is already deployed, so it should be in the `active` state.
+
+Delete the comments inside the test case and update it to look like this (the test name has also been updated):
+
+```typescript
+it('should be `active` after deploy', async () => {
+    let address = client.address;
+    const contract = await blockchain.getContract(address);
+    expect(contract.accountState?.type).toEqual('active');
+});
+```
+
+Here, we obtain the `Client` contract address (it's calculated from its code and state), retrieve the contract at that address from the test blockchain, and expect its state to be `active`.
+
+Run the tests in your IDE or from the console by executing the following command: `npx blueprint test`. There should be only one test, and it should pass:
+
+```
+ PASS  tests/Client.spec.ts
+  Client
+    ✓ should be `active` after deploy (163 ms)
+```
+
+### `uninit` State
