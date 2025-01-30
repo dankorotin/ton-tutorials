@@ -6,9 +6,6 @@ Tolk is a smart contract development language for The Open Network (TON) blockch
 
 Welcome aboard! 🏴‍☠️
 
-<!-- Place this tag where you want the button to render. -->
-<a class="github-button" href="https://github.com/dankorotin/ton-tutorials" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-size="large" aria-label="Star dankorotin/ton-tutorials on GitHub">Star</a>
-
 # Tutorials
 
 ## 👶 1. Basics and Testing
