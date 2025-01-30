@@ -1,5 +1,5 @@
-import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
-import { Cell, toNano } from '@ton/core';
+import { Blockchain, createEmptyShardAccount, SandboxContract, TreasuryContract } from '@ton/sandbox';
+import { Address, Cell, SendMode, toNano } from '@ton/core';
 import { Client } from '../wrappers/Client';
 import '@ton/test-utils';
 import { compile } from '@ton/blueprint';
@@ -20,9 +20,11 @@ describe('Client', () => {
         client = blockchain.openContract(Client.createFromConfig({}, code));
         deployer = await blockchain.treasury('deployer');
 
+        blockchain.now = Math.floor(Date.now() / 1000);
+
         if (expect.getState().currentTestName?.includes("[skip deploy]")) return;
 
-        const deployResult = await client.sendDeploy(deployer.getSender(), toNano('0.05'));
+        const deployResult = await client.sendDeploy(deployer.getSender(), toNano('0.0001'));
         expect(deployResult.transactions).toHaveTransaction({
             from: deployer.address,
             to: client.address,
@@ -31,15 +33,15 @@ describe('Client', () => {
         });
     });
 
-    it('should be `active` after deploy', async () => {
-        let address = client.address;
-        const contract = await blockchain.getContract(address);
-        expect(contract.accountState?.type).toEqual('active');
-    });
-
     it('should be `uninit` without deploy [skip deploy]', async () => {
         let address = client.address;
         const contract = await blockchain.getContract(address);
         expect(contract.accountState?.type).toEqual('uninit');
+    });
+
+    it('should be `active` after deploy', async () => {
+        let address = client.address;
+        const contract = await blockchain.getContract(address);
+        expect(contract.accountState?.type).toEqual('active');
     });
 });

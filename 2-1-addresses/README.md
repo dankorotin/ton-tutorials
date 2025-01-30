@@ -67,9 +67,25 @@ Your input should look like this:
 
 As you probably remember from the earlier tutorials, we use Blueprint to create a project from a template. This template includes an empty contract (located at `contracts/client.tolk`), wrappers, scripts, and tests.
 
-### `active` State
+### `nonexist` State
 
-Right now, we’re specifically interested in the tests. Open `tests/Client.spec.ts` and take a look at the only test case there—the one named `'should deploy'`:
+Right now, we’re specifically interested in the tests. Unfortunately, we can't test for the `nonexist` state locally, as the `getContract` method in Sandbox *always* returns an instance of `SmartContract`, which has only the three other possible values in its `accountState.type`. In practice, the `nonexist` state represents the absence of any data at the address.
+
+However, you can generate a valid random TON account address by running this code (e.g., in one of your tests), then search for it in a blockchain explorer like Tonviewer to ensure it is in the `nonexist` state:
+
+```typescript
+console.log(new Address(0, new Buffer("cbd5fedaafb6bf68024eb52d8d3a497c920cfe44cd269ed7e10126ef5a1d4466", "hex")).toRawString);
+```
+
+This code generates the following address: `0:cbd5fedaafb6bf68024eb52d8d3a497c920cfe44cd269ed7e10126ef5a1d4466`, and you can see that it has a `nonexist` state—there's indeed nothing at it [here](https://tonviewer.com/EQDL1f7ar7a_aAJOtS2NOkl8kgz-RM0mntfhASbvWh1EZsK7).
+
+> **Tip:** Replace the hash value (the first argument of the `Buffer` constructor above) with your own random SHA-256 hash, and you'll get a different address. It's *extremely unlikely* that you will generate the address of an existing contract.
+
+> ⚠️ **Important!** You might have noticed that the address displayed in Tonviewer (or another service of your choice) is different: `EQDL1f7ar7a_aAJOtS2NOkl8kgz-RM0mntfhASbvWh1EZsK7` in this case. This is because it’s a *user-friendly* representation of the raw address. We will learn about these soon.
+
+### `uninit` State
+
+Open `tests/Client.spec.ts` and take a look at the only test case there—the one named `'should deploy'`:
 
 ```typescript
 it('should deploy', async () => {
@@ -78,35 +94,9 @@ it('should deploy', async () => {
 });
 ```
 
-It's empty because all of the deployment logic is inside the `beforeEach` function. By the time the test runs, our contract is already deployed, so it should be in the `active` state.
+It's empty because all of the deployment logic is inside the `beforeEach` function. By the time the test runs, our contract is already deployed, so it should be in the `active` state. However, we want to make it `uninit`.
 
 Delete the comments inside the test case and update it to look like this (the test name has also been updated):
-
-```typescript
-it('should be `active` after deploy', async () => {
-    let address = client.address;
-    const contract = await blockchain.getContract(address);
-    expect(contract.accountState?.type).toEqual('active');
-});
-```
-
-Here, we obtain the `Client` contract address (it's calculated from its code and state), retrieve the contract at that address from the test blockchain, and expect its state to be `active`.
-
-Run the tests in your IDE or from the console by executing the following command: `npx blueprint test`. There should be only one test, and it should pass:
-
-```
- PASS  tests/Client.spec.ts
-  Client
-    ✓ should be `active` after deploy (163 ms)
-```
-
-### `uninit` State
-
-> ⚠️ **Important!** We won't be testing for the `nonexist` state, as the `getContract` method always returns an instance of `SmartContract`, which has only the three other possible values in its `accountState.type`. In practice, the `uninit` state represents the absence of any data at the address.
-
-Let's write another test to check the state of a non-deployed smart contract address.
-
-Add the following code below the previous test case:
 
 ```typescript
 it('should be `uninit` without deploy [skip deploy]', async () => {
@@ -116,12 +106,15 @@ it('should be `uninit` without deploy [skip deploy]', async () => {
 });
 ```
 
-It looks almost identical to the one above, with two key differences:
+Here, we obtain the `client` contract address (it's calculated from its code and state), retrieve the contract at that address from the test blockchain, and expect its state to be `uninit`.
 
-1. It has a different name, ending with `[skip deploy]`. We need to skip the deployment in `beforeEach` to make this test pass. There are several ways to do this; here, we’ll check for the presence of this instruction in the test name to determine whether to skip deployment.
-2. It expects the state to be `uninit`.
+If you run the tests now by executing
 
-If you run the tests now, you will see that this one fails—which is expected because there's no logic to skip deployment in `beforeEach`. Let's fix that.
+```
+npx blueprint test
+```
+
+in the terminal window inside your project directory, you will see that this one fails—which is expected because there's no logic to skip deployment in `beforeEach`. There are several ways to do this; here, we’ll check for the presence of the `[skip deploy]` instruction in the test name to determine whether to skip deployment.
 
 Update the `beforeEach` function to look like this:
 
@@ -145,4 +138,40 @@ beforeEach(async () => {
 
 The only line added here is `if (expect.getState().currentTestName?.includes("[skip deploy]")) return;`. It checks for the presence of `[skip deploy]` in the current test's name, and if it's found, the deployment code is not executed.
 
-The tests will now pass.
+The tests will now pass:
+
+```
+ PASS  tests/Client.spec.ts
+  Client
+    ✓ should be `uninit` without deploy [skip deploy] (72 ms)
+```
+
+### `active` State
+
+Let's write another test to check the state of a deployed smart contract address.
+
+Add the following code below the previous test case:
+
+```typescript
+it('should be `active` after deploy', async () => {
+    let address = client.address;
+    const contract = await blockchain.getContract(address);
+    expect(contract.accountState?.type).toEqual('active');
+});
+```
+
+It looks almost identical to the one above, with two key differences:
+
+1. Its name doesn't contain `[skip deploy]`.
+2. It expects the state to be `active`.
+
+Since there's no `[skip deploy]` instruction in the test name, the `beforeEach` function will execute the deployment steps, ensuring that both tests pass:
+
+```
+ PASS  tests/Client.spec.ts
+  Client
+    ✓ should be `uninit` without deploy [skip deploy] (161 ms)
+    ✓ should be `active` after deploy (83 ms)
+```
+
+### `frozen` State
