@@ -81,6 +81,11 @@ For example, the following address: `0:cbd5fedaafb6bf68024eb52d8d3a497c920cfe44c
 
 ### `uninit` State
 
+On a real blockchain, this state follows `nonexist` if someone sends funds to the address. As of the time of writing, in Sandbox, it is the default state of an "empty" address. So we can only test two traits of such an address:
+
+1. The initial balance is zero.
+2. Even an `uninit` address can have a positive balance.
+
 Open `tests/Client.spec.ts` and take a look at the only test case there—the one named `'should deploy'`:
 
 ```typescript
