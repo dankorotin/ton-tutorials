@@ -1,4 +1,4 @@
-# Smart Contract Addresses
+# Smart Contract Addresses and States, Part 1
 
 ## Before We Begin
 
@@ -100,7 +100,7 @@ Delete the comments inside the test case and update it to look like this (the te
 
 ```typescript
 it('should be `uninit` without deploy [skip deploy]', async () => {
-    let address = client.address;
+    const address = client.address;
     const contract = await blockchain.getContract(address);
     expect(contract.accountState?.type).toEqual('uninit');
 });
@@ -154,7 +154,7 @@ Add the following code below the previous test case:
 
 ```typescript
 it('should be `active` after deploy', async () => {
-    let address = client.address;
+    const address = client.address;
     const contract = await blockchain.getContract(address);
     expect(contract.accountState?.type).toEqual('active');
 });
@@ -175,3 +175,58 @@ Since there's no `[skip deploy]` instruction in the test name, the `beforeEach` 
 ```
 
 ### `frozen` State
+
+As of the time of writing, Sandbox won't mark a smart contract as `frozen` if it lacks funds to pay for its storage (as would happen on a real blockchain). Instead, it will simply reduce its balance to zero while keeping the contract active.
+
+> **Tip:** Read more about fees (particularly the storage fee) [here](https://docs.ton.org/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee).
+
+However, we can at least write a test to ensure that the contract balance decreases over time—though not before the contract receives a message to trigger payments.
+
+Add this test below the previous ones:
+
+```typescript
+it('should reduce balance over time', async () => {
+    const address = client.address;
+    let contract = await blockchain.getContract(address);
+
+    // Get and save the contract balance immediately after deployment.
+    const balanceAfterDeploy = contract.balance;
+    expect(balanceAfterDeploy).toBeGreaterThan(0n);
+
+    // Advance the time by one year.
+    blockchain.now = Math.floor(Date.now() / 1000) + 365 * 24 * 60 * 60;
+
+    // The contract balance should still be the same as after deployment.
+    // This is because the payment phase hasn't been triggered yet.
+    contract = await blockchain.getContract(address);
+    expect(contract.balance).toEqual(balanceAfterDeploy);
+
+    // Send a message to trigger the storage fee payment.
+    await deployer.send({
+        to: address,
+        value: toNano('0'),
+        sendMode: SendMode.PAY_GAS_SEPARATELY,
+    });
+
+    // Now the contract balance should be 0.
+    // On a real blockchain, the balance would become negative, and the contract would be frozen.
+    contract = await blockchain.getContract(address);
+    expect(contract.balance).toEqual(0n);
+});
+```
+
+Read the comments in the test above—they explain what happens at each step.
+
+Before running it, reduce the amount of TON sent to the contract during deployment in `beforeEach` to a smaller value so that it is consumed by fees more quickly.
+
+For example, update the deployment code like this:
+
+```typescript
+const deployResult = await client.sendDeploy(deployer.getSender(), toNano('0.0001'));
+```
+
+Run the tests again, and all should pass. If the last one doesn’t (e.g., due to changed fees in Sandbox), log the balance values to the console and check: it’s likely that you need to either reduce the amount of TON sent during deployment or increase the time elapsed on the test blockchain.
+
+## Wrapping Up
+
+So far, we've learned about raw contract addresses and account states. In the second part of this tutorial, we will explore user-friendly addresses, their differences, and their roles in smart contract behavior.
