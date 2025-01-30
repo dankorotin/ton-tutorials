@@ -30,7 +30,7 @@ Use TDD to implement and test conditional behavior while handling edge cases.
 
 To send a message, you need to know the address. Gain an in-depth understanding of raw addresses and account states on the TON Blockchain.
 
-### 2.2. [Addresses and States, Part 2: User-Friendly Addresses](2-2-addresses-and-states-2/README.md)
+### 2.2. Addresses and States, Part 2: User-Friendly Addresses
 
 🚧 **Coming Soon!** 🚧 Learn how to make the addresses you share safer for end users while ensuring correctness and indicating important traits.
 
