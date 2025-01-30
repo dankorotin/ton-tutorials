@@ -20,8 +20,9 @@ describe('Client', () => {
         client = blockchain.openContract(Client.createFromConfig({}, code));
         deployer = await blockchain.treasury('deployer');
 
-        const deployResult = await client.sendDeploy(deployer.getSender(), toNano('0.05'));
+        if (expect.getState().currentTestName?.includes("[skip deploy]")) return;
 
+        const deployResult = await client.sendDeploy(deployer.getSender(), toNano('0.05'));
         expect(deployResult.transactions).toHaveTransaction({
             from: deployer.address,
             to: client.address,
@@ -34,5 +35,11 @@ describe('Client', () => {
         let address = client.address;
         const contract = await blockchain.getContract(address);
         expect(contract.accountState?.type).toEqual('active');
+    });
+
+    it('should be `uninit` without deploy [skip deploy]', async () => {
+        let address = client.address;
+        const contract = await blockchain.getContract(address);
+        expect(contract.accountState?.type).toEqual('uninit');
     });
 });

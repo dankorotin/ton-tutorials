@@ -101,3 +101,48 @@ Run the tests in your IDE or from the console by executing the following command
 ```
 
 ### `uninit` State
+
+> ⚠️ **Important!** We won't be testing for the `nonexist` state, as the `getContract` method always returns an instance of `SmartContract`, which has only the three other possible values in its `accountState.type`. In practice, the `uninit` state represents the absence of any data at the address.
+
+Let's write another test to check the state of a non-deployed smart contract address.
+
+Add the following code below the previous test case:
+
+```typescript
+it('should be `uninit` without deploy [skip deploy]', async () => {
+    let address = client.address;
+    const contract = await blockchain.getContract(address);
+    expect(contract.accountState?.type).toEqual('uninit');
+});
+```
+
+It looks almost identical to the one above, with two key differences:
+
+1. It has a different name, ending with `[skip deploy]`. We need to skip the deployment in `beforeEach` to make this test pass. There are several ways to do this; here, we’ll check for the presence of this instruction in the test name to determine whether to skip deployment.
+2. It expects the state to be `uninit`.
+
+If you run the tests now, you will see that this one fails—which is expected because there's no logic to skip deployment in `beforeEach`. Let's fix that.
+
+Update the `beforeEach` function to look like this:
+
+```typescript
+beforeEach(async () => {
+    blockchain = await Blockchain.create();
+    client = blockchain.openContract(Client.createFromConfig({}, code));
+    deployer = await blockchain.treasury('deployer');
+
+    if (expect.getState().currentTestName?.includes("[skip deploy]")) return;
+
+    const deployResult = await client.sendDeploy(deployer.getSender(), toNano('0.05'));
+    expect(deployResult.transactions).toHaveTransaction({
+        from: deployer.address,
+        to: client.address,
+        deploy: true,
+        success: true,
+    });
+});
+```
+
+The only line added here is `if (expect.getState().currentTestName?.includes("[skip deploy]")) return;`. It checks for the presence of `[skip deploy]` in the current test's name, and if it's found, the deployment code is not executed.
+
+The tests will now pass.
