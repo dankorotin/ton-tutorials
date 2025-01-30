@@ -16,15 +16,17 @@ But first, we'll start with the essentials: what types of smart contract address
 
 TON supports creating up to 2^32 **workchains** (i.e., separate blockchains), each of which can be subdivided into up to 2^60 **shards** (used to parallelize code execution). Currently, there are two workchains: Masterchain and Basechain.
 
-**Masterchain** is "the blockchain of blockchains"—its blocks contain additional information (latest block hashes) about all other chains in the system. It has an ID of `-1`.
+**Masterchain** is "the blockchain of blockchains"—its blocks contain additional information (latest block hashes) about all other chains in the system. **It has an ID of `-1`.**
 
-**Basechain** is where most smart contracts exist and interact. It has significantly lower fees, so unless you need to do something highly specific, you would deploy your smart contracts to Basechain. It has an ID of `0`.
+**Basechain** is where most smart contracts exist and interact. It has significantly lower fees, so unless you need to do something highly specific, you would deploy your smart contracts to Basechain. **It has an ID of `0`.**
+
+**The first part of the address** is the **workchain ID**, which is either `0` (Basechain) or `-1` (Masterchain).
 
 > **Tip:** You can read more on this topic [here](https://docs.ton.org/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains).
 
-The second part of the address is a 256-bit hash (SHA-256) of its **initial code** and **initial state**. This means that if two smart contracts have the exact same code after compilation and the exact same values at the moment of deployment, they will have the same address.
+**The second part of the address** is a **256-bit hash** (`SHA-256`) of its **initial code** and **initial state**. This means that if two smart contracts have the exact same code after compilation and the exact same values at the moment of deployment, they will have the same address.
 
-Which makes perfect sense if you think about it—there’s absolutely no reason to have two copies of a smart contract doing *exactly the same thing*.
+> Which makes perfect sense if you think about it—there’s absolutely no reason to have two copies of a smart contract doing *exactly the same thing*.
 
 The two parts we discussed above are written one after the other, separated by a `:`, forming the **raw smart contract address**. For example, like this:
 
