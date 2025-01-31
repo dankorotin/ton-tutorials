@@ -169,6 +169,8 @@ it('should be `uninit` without deploy, with a positive balance after a transacti
 
 The difference here is that we send 1 TON to an `uninit` address (paying gas separately—i.e., from the sender's balance). The test expects the balance at the address to be exactly 1 TON (the balance is stored in nanotons, hence the `toNano` usage).
 
+> You might have noticed the `bounce: false` line in the test above. We will cover what this means in the next part of this tutorial. For now, you can treat it as *"keep the funds I sent you, even if there was an error processing the request."*
+
 Run the tests again, and they should both pass:
 
 ```
