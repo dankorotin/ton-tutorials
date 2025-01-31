@@ -1,4 +1,4 @@
-# Testing Smart Contract Behavior
+# Testing Smart Contracts
 
 ## Before We Begin
 

@@ -28,7 +28,9 @@ A **smart contract** is a program running on the TON Blockchain via its [TVM](ht
 
 > The address is derived from the initial code and data, so it can be calculated prior to deployment. Moreover, if your code produces the exact same bytecode and data on deployment as another deployed contract, their addresses will be the same. You will most likely encounter this behavior if you don't change any significant parts of this tutorial's code: after deployment, you'll see that your "new" smart contract already has transactions and a non-zero total value.
 
-Smart contracts on TON interact only by sending and receiving **messages** (unlike in EVM-based chains, where calling other contracts can be done during the process of code execution). This pattern is called [Actor](https://docs.ton.org/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains#single-actor). The most important takeaway here is that **there's no way to predict how long it will take a message from one actor (i.e., smart contract) to reach another**, nor **how long it will take for the response to arrive**. However, **the delivery of messages is strictly guaranteed**.
+Smart contracts on TON interact only by sending and receiving **messages** (unlike in EVM-based chains, where calling other contracts can be done during the process of code execution). This pattern is called [Actor](https://docs.ton.org/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains#single-actor).
+
+The most important takeaway here is that **there's no way to predict how long it will take a message from one actor (i.e., smart contract) to reach another**, nor **how long it will take for the response to arrive**. However, **the delivery of messages is strictly guaranteed**.
 
 ## Tutorial Goals
 

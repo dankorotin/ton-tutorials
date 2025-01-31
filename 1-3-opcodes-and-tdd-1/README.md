@@ -1,4 +1,4 @@
-# Opcodes and Test-Driven Development, Part 1
+# Conditional Logic, Part 1: Opcodes, Exceptions, and TDD
 
 ## Before We Begin
 

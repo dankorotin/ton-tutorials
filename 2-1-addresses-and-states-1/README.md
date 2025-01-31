@@ -1,4 +1,4 @@
-# Smart Contract Addresses and States, Part 1
+# Addresses, Part 1: Raw Addresses and States
 
 ## Before We Begin
 
@@ -8,7 +8,7 @@ To understand and successfully complete this tutorial, you should be familiar wi
 
 In this tutorial, we'll begin creating a simple **client-server** relationship between two smart contracts. In the following parts, we will explore how contracts can communicate and trigger different functionality, as well as potential pitfalls when implementing such interactions.
 
-But first, we'll start with the essentials: what types of smart contract addresses exist on TON, how they are calculated, and the lifecycle of both the address itself and the smart contract residing at that address.
+But since **contracts interact by sending messages**—and a message requires an address—we’ll start with the essentials: **what types of smart contract addresses exist on TON**, how they are calculated, and the lifecycle of both the address itself and the smart contract residing at that address.
 
 ## Raw Address
 
@@ -26,7 +26,7 @@ TON supports creating up to 2^32 **workchains** (i.e., separate blockchains), ea
 
 **The second part of the address** is a **256-bit hash** (`SHA-256`) of its **initial code** and **initial state**. This means that if two smart contracts have the exact same code after compilation and the exact same values at the moment of deployment, they will have the same address.
 
-> Which makes perfect sense if you think about it—there’s absolutely no reason to have two copies of a smart contract doing *exactly the same thing*.
+> Which makes perfect sense if you think about it—there’s absolutely no reason to have two copies of a smart contract doing *exactly the same thing* with *exactly the same initial state*.
 
 The two parts we discussed above are written one after the other, separated by a `:`, forming the **raw smart contract address**. For example, like this:
 

@@ -1,4 +1,4 @@
-# Opcodes and Test-Driven Development, Part 2
+Conditional Logic, Part 2: Handling Valid Opcodes
 
 ## Before We Begin
 
@@ -264,4 +264,4 @@ Run the tests once more and enjoy the utter and complete "greenness":
 
 ## Wrapping Up
 
-Congratulations on learning how to use opcodes to alter your contract's behavior! You’ve also mastered how to ~~drive yourself crazy~~ write clean and tested code with TDD. See you in the next one!
+Congratulations on learning how to use opcodes to alter your contract's behavior! You’ve also mastered how to ~~drive yourself crazy~~ write clean and tested code with TDD. See you in the [next one](../2-1-addresses-and-states-1/README.md)!

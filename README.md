@@ -24,7 +24,7 @@ Implement conditional logic using operation codes. Learn about exceptions and Te
 
 ### 1.4. [Conditional Logic, Part 2: Handling Valid Opcodes](1-4-opcodes-and-tdd-2/README.md)
 
-Apply TDD to implement and validate conditional logic with edge cases.
+Apply TDD to implement and validate conditional logic while handling edge cases.
 
 ## 👦 2. Communication
 
@@ -34,7 +34,7 @@ To send a message, you need to know the address. Gain an in-depth understanding 
 
 ### 2.2. Addresses, Part 2: User-Friendly Addresses
 
-🚧 **Coming Soon!** 🚧 Learn how to make the addresses you share safer for end users while ensuring correctness and indicating important traits.
+🚧 **Coming Soon!** 🚧 Learn how to make sharing an address safer by ensuring correctness and indicating important traits.
 
 ---
 
