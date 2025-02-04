@@ -10,19 +10,23 @@ Welcome aboard! 🏴‍☠️
 
 ## 👶 1. Basics and Testing
 
-### 1.1. [Create and Deploy a Smart Contract](1-1-create-smart-contract/README.md)
+### 1.1. [Create and Deploy, Part 1: Implementing Logic](1-1-create-and-deploy-1/README.md)
 
-Create and deploy a basic counter smart contract with Blueprint. Test its behavior manually using internal and `get` messages.
+Create a basic counter smart contract with Blueprint. Get acquainted with crucial details and basic Tolk syntax.
 
-### 1.2. [Testing Smart Contracts](1-2-tests/README.md)
+### 1.2. [Create and Deploy, Part 2: Deploying and Testing](1-2-create-and-deploy-2/README.md)
 
-Automate smart contract testing using Sandbox.
+Deploy the smart contract to testnet. Test its behavior manually using internal and `get` messages.
 
-### 1.3. [Conditional Logic, Part 1: Opcodes, Exceptions, and TDD](1-3-opcodes-and-tdd-1/README.md)
+### 1.3. [Automated Testing](1-3-tests/README.md)
+
+Automate smart contract testing using Sandbox. Understand the test environment and test cases.
+
+### 1.4. [Conditional Logic, Part 1: Opcodes, Exceptions, and TDD](1-4-opcodes-and-tdd-1/README.md)
 
 Implement conditional logic using operation codes. Learn about exceptions and Test-Driven Development (TDD).
 
-### 1.4. [Conditional Logic, Part 2: Handling Valid Opcodes](1-4-opcodes-and-tdd-2/README.md)
+### 1.5. [Conditional Logic, Part 2: Handling Valid Opcodes](1-5-opcodes-and-tdd-2/README.md)
 
 Apply TDD to implement and validate conditional logic while handling edge cases.
 

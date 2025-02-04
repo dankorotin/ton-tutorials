@@ -2,7 +2,7 @@
 
 ## Before We Begin
 
-Here we assume that you followed the first tutorial ([Creating and Deploying a Smart Contract](../1-1-create-smart-contract/README.md)) and understand the concepts of messages, working with data, and the deployment process. If you don't, please follow the first tutorial and come back when you're comfortable with these concepts.
+Here we assume that you followed the first tutorial ([Create and Deploy, Part 1: Implementing Logic](../1-1-create-and-deploy-1/README.md)) and understand the concepts of messages, working with data, and the deployment process ([Create and Deploy, Part 2: Deploying and Testing](../1-2-create-and-deploy-2/README.md)). If you don't, please follow the first tutorial and come back when you're comfortable with these concepts.
 
 > **This tutorial uses the code from the previous one, so we suggest you copy it to a separate directory and work there**.
 
@@ -239,4 +239,4 @@ Here, we send 32 `1`s, of which only the first 16 are used. This is the binary r
 
 ## Wrapping Up
 
-You made it! Now you have a very important tool in your skill set: automated testing. It will not only save you a ton of time testing your contracts' logic but also help you write better code with more confidence. In the [next tutorial](../1-3-opcodes-and-tdd-1/README.md), we'll explore this further as we employ the power of Test-Driven Development!
+You made it! Now you have a very important tool in your skill set: automated testing. It will not only save you a ton of time testing your contracts' logic but also help you write better code with more confidence. In the [next tutorial](../1-4-opcodes-and-tdd-1/README.md), we'll explore this further as we employ the power of Test-Driven Development!

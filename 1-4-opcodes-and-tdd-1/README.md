@@ -2,7 +2,7 @@
 
 ## Before We Begin
 
-Here, we assume that you followed the first two parts of this tutorial: [Creating and Deploying a Smart Contract](../1-1-create-smart-contract/README.md) and [Testing Smart Contract Behavior](../1-2-tests/README.md).
+Here, we assume that you followed the first two parts of this tutorial: [Create and Deploy, Part 1: Implementing Logic](../1-1-create-and-deploy-1/README.md) and [Testing Smart Contracts](../1-3-tests/README.md).
 
 > **This tutorial uses the code from the previous one, so we suggest you copy it to a separate directory and work there**.
 
@@ -199,4 +199,4 @@ get fun total() {
 
 You can also compare the tests and the wrapper to your implementation by taking a look at `tests/Counter.spec.ts` and `wrappers/Counter.ts` in this tutorial's files.
 
-So far, we've covered 3 out of 6 scenarios outlined at the beginning of the tutorial, and it's been a rather long journey, so we'll split this one into two parts. In the [next one](../1-4-opcodes-and-tdd-2/README.md), we'll finally handle the valid opcodes!
+So far, we've covered 3 out of 6 scenarios outlined at the beginning of the tutorial, and it's been a rather long journey, so we'll split this one into two parts. In the [next one](../1-5-opcodes-and-tdd-2/README.md), we'll finally handle the valid opcodes!

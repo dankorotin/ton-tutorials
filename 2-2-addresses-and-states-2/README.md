@@ -1,282 +1,121 @@
-# Addresses, Part 1: Raw Addresses and States
+Addresses, Part 2: User-Friendly Addresses
 
 ## Before We Begin
 
-To understand and successfully complete this tutorial, you should be familiar with the basic concepts of the TON blockchain, such as smart contracts, messages, and automated testing. If you aren’t, we suggest completing the [Basics and Testing](../README.md#-1-basics-and-testing) section first.
+Here, we assume that you followed the [first part](../2-1-addresses-and-states-1/README.md) of this tutorial and understand raw addresses and states. If you don’t, please complete the first part and return when you’re comfortable with these concepts.
+
+> **This tutorial uses the code from the previous one, so we suggest you copy it to a separate directory and work there**.
 
 ## Tutorial Goals
 
-In this tutorial, we'll begin creating a simple **client-server** relationship between two smart contracts. In the following parts, we will explore how contracts can communicate and trigger different functionality, as well as potential pitfalls when implementing such interactions.
+In this part of the tutorial, we will explore the traits and benefits of user-friendly addresses, write a fake wallet app, and test the behavior different forms of addresses would trigger.
 
-But since **contracts interact by sending messages**—and a message requires an address—we’ll start with the essentials: **what types of smart contract addresses exist on TON**, how they are calculated, and the lifecycle of both the address itself and the smart contract residing at that address.
+## User-Friendly Addresses
 
-## Raw Address
+**Raw addresses don't provide any safety nets**: they don't indicate whether the funds should be returned to the sender on error (e.g., if there's no contract at the address or it cannot execute the request). They also don't reveal whether the address belongs to a production or test blockchain. Moreover, there's no validity check—accidentally replacing a character in an address won't make it invalid. **User-friendly addresses are here to fix this!**
 
-**Smart contract addresses on TON consist of two main components**: the **workchain ID** (a signed 32-bit integer) and the **account ID** (a 256-bit identifier, used in both existing chains).
+> **Tip:** You can find more details on user-friendly addresses in [TEP-2](https://github.com/ton-blockchain/TEPs/blob/master/text/0002-address.md#smart-contract-addresses) and [docs](https://docs.ton.org/v3/documentation/smart-contracts/addresses#user-friendly-address).
 
-TON supports creating up to 2^32 **workchains** (i.e., separate blockchains), each of which can be subdivided into up to 2^60 **shards** (used to parallelize code execution). Currently, there are two workchains: Masterchain and Basechain.
+A user-friendly address creation starts with a 36-byte sequence, composed as follows:
 
-**Masterchain** is "the blockchain of blockchains"—its blocks contain additional information (latest block hashes) about all other chains in the system. **It has an ID of `-1`.**
+1. **Flags (1 byte).** These indicate whether messages sent to this address should be bounceable, whether the address belongs to testnet, and whether the address is URL-safe (deprecated).
+    - `isBounceable` If true (`0x11`), this means that a smart contract at the address expects bounceable internal messages that will "bounce back" to the sender if a problem occurs with its handling (carrying the original message’s TON value minus the fees). A non-bounceable flag (`0x51`), however, indicates that the messages are expected to be "consumed" by the receiver, adding the value in TON to its balance (again, after fees are paid). Typically, the bounceable flag is true for smart contracts with internal logic, and non-bounceable for wallets.
+    - `isTestnetOnly` Addresses beginning with `0x80` should not be accepted by software running on the production network.
 
-**Basechain** is where most smart contracts exist and interact. It has significantly lower fees, so unless you need to do something highly specific, you would deploy your smart contracts to Basechain. **It has an ID of `0`.**
+2. **Workchain ID (1 byte).** A signed 8-bit integer (`0x00` for the Basechain, `0xff` for the Masterchain).
 
-**The first part of the address** is the **workchain ID**, which is either `0` (Basechain) or `-1` (Masterchain).
+3. **Account ID (32 bytes).** The account ID is a big-endian 256-bit address within the workchain.
 
-> **Tip:** You can read more on this topic [here](https://docs.ton.org/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains).
+4. **Address Verification.** A CRC16-CCITT checksum of the previous 34 bytes. This ensures that the address is valid.
 
-**The second part of the address** is a **256-bit hash** (`SHA-256`) of its **initial code** and **initial state**. This means that if two smart contracts have the exact same code after compilation and the exact same values at the moment of deployment, they will have the same address.
+The sequence of bytes is then encoded using regular or URL-friendly `base64`, resulting in a 48-character long user-friendly address.
 
-> Which makes perfect sense if you think about it—there’s absolutely no reason to have two copies of a smart contract doing *exactly the same thing* with *exactly the same initial state*.
+## User-Friendly Addresses in Practice
 
-The two parts we discussed above are written one after the other, separated by a `:`, forming the **raw smart contract address**. For example, like this:
+**It is important to understand that only raw addresses are used on-chain.** These addresses do not have any flags. The interpretation of user-friendly addresses, including their flags, is handled by off-chain applications, which can choose to either respect or ignore them.
 
-```
--1:fcb91a3a3816d0f7b8c2c76108b8a9bc5a6b7a55bd79f8ab101c52db29232260
-```
+To illustrate this, we will create a basic **fake wallet app** and test its behavior based on the type of address. We will also inspect the results of sending messages with different flags and payloads to addresses in various states.
 
-> Uppercase letters (such as 'A', 'B', 'C', 'D', etc.) may be used in address strings instead of their lowercase counterparts (such as 'a', 'b', 'c', 'd', etc.).
+### Fake Wallet App
 
-## Address States
+The "wallet app" we will create will be a **helper** used for testing purposes only, so we will place it in the `tests` directory.
 
-By now, you might be wondering: if a contract address can be calculated before deployment, can messages be sent to an empty address? Absolutely! In fact, **this address will have—and may change—its state even before anything is deployed there**. Moreover, it can continue to change *after* a smart contract is deployed at that address.
+1. Create another directory inside `tests` named `helpers`.
+2. Then, create an empty TypeScript file there and name it `FakeWalletApp.ts`.
 
-Let's take a look at the possible state values:
-
-- `nonexist`: No accepted transactions have occurred on this address, meaning it doesn't contain any data (or the contract was deleted).
-- `uninit`: The address has a balance and meta info but does not yet contain smart contract code or persistent data. It enters this state, for example, when it was in a `nonexist` state and another address sent tokens to it.
-- `active`: The address has smart contract code, persistent data, and balance. In this state, it can execute logic during transactions and modify its persistent data. An address enters this state when it was `uninit` and receives an incoming message with a `state_init` parameter.
-- `frozen`: The address cannot perform any operations. This state contains only two hashes of the previous state (code and state cells, respectively). When an address's storage fee exceeds its balance, it enters this state. There is a [project](https://unfreezer.ton.org) that can help unfreeze your contract if this happens, but the process can be challenging.
-
-### Address States in Practice
-
-Let's create a new project and use the Sandbox test framework to obtain smart contract addresses and their states, gaining a better understanding of what happens to them, why, and when.
-
-Navigate to your TON projects directory, open a terminal window, and run this:
-
-```bash
-npm create ton@latest
-```
-
-Name the project whatever you like (e.g., `client-server` or `addresses`). Set the first contract name to `Client` (we will add a `Server` later), and choose the option to create an empty contract in Tolk.
-
-Your input should look like this:
-
-```
-? Project name client-server
-? First created contract name (PascalCase) Client
-? Choose the project template An empty contract (Tolk)
-```
-
-As you probably remember from the earlier tutorials, we use Blueprint to create a project from a template. This template includes an empty contract (located at `contracts/client.tolk`), wrappers, scripts, and tests.
-
-### `nonexist` State
-
-Right now, we’re specifically interested in the tests. Unfortunately, we can't test for the `nonexist` state locally, as the `getContract` method in Sandbox *always* returns an instance of `SmartContract`, which has only the three other possible values in its `accountState.type`. In practice, the `nonexist` state represents the absence of any data at the address.
-
-However, you can generate a valid random TON account address by combining a workchain ID (e.g., `0`) with a random SHA-256 hash. Then, search for it in a blockchain explorer like Tonviewer to confirm that it is in the `nonexist` state.
-
-For example, the following address: `0:cbd5fedaafb6bf68024eb52d8d3a497c920cfe44cd269ed7e10126ef5a1d4466`. You can see that it has a `nonexist` state [here](https://tonviewer.com/EQDL1f7ar7a_aAJOtS2NOkl8kgz-RM0mntfhASbvWh1EZsK7).
-
-> **Tip:** Replace the hash value with your own random SHA-256 hash, and you'll get a different address. It's *extremely unlikely* that you will generate the address of an existing contract.
-
-> ⚠️ **Important!** You might have noticed that the address displayed in Tonviewer (or another service of your choice) is different: `EQDL1f7ar7a_aAJOtS2NOkl8kgz-RM0mntfhASbvWh1EZsK7` in this case. This is because it’s a *user-friendly* representation of the raw address. We will learn about these soon.
-
-### `uninit` State
-
-On a real blockchain, this state follows `nonexist` if someone sends funds to the address. As of the time of writing, in Sandbox, it is the default state of an "empty" address. So we can only test two traits of such an address:
-
-1. The initial balance is zero.
-2. Even an `uninit` address can have a positive balance.
-
-Open `tests/Client.spec.ts` and take a look at the only test case there—the one named `'should deploy'`:
+The full path to it should be `tests/helpers/FakeWalletApp.ts`. Paste the code below into it:
 
 ```typescript
-it('should deploy', async () => {
-    // the check is done inside beforeEach
-    // blockchain and client are ready to use
-});
+import { Address, SendMode, toNano } from '@ton/core';
+import { SandboxContract, SendMessageResult, TreasuryContract } from '@ton/sandbox';
+
+export class FakeWalletApp {
+    private readonly walletContract: SandboxContract<TreasuryContract>;
+    private readonly isTestnet: boolean;
+
+    constructor(walletContract: SandboxContract<TreasuryContract>, isTestnet: boolean) {
+        this.walletContract = walletContract;
+        this.isTestnet = isTestnet;
+    }
+}
 ```
 
-It's empty because all of the deployment logic is inside the `beforeEach` function. By the time the test runs, our contract is already deployed, so it should be in the `active` state. However, we want to make it `uninit`.
+> Your IDE might show warnings that some of the imports are unused. Ignore them for now, as they will disappear as we add more logic to the class.
 
-Delete the comments inside the test case and update it to look like this (the test name has also been updated):
+The fake wallet class we are making has two `private readonly` properties:
+
+1. `walletContract` of type `SandboxContract<TreasuryContract>`. This is a wallet contract implementation provided by Sandbox. It will emulate your wallet contract deployed to the TON blockchain.
+2. `isTestnet` indicates whether we treat this contract as being deployed on testnet or a production chain.
+
+Below the properties is the class constructor, which simply assigns the arguments to the properties.
+
+### Fake Wallet App Tests
+
+Now, create another file in the same directory and name it `FakeWalletApp.spec.ts`. This file will contain tests for the wallet, and we will use a **test-driven approach** to gradually implement the logic required for handling user-friendly addresses and analyzing the resulting transactions.
+
+The full path to the file should be `tests/helpers/FakeWalletApp.spec.ts`. Paste the following code into it:
 
 ```typescript
-it('should be `uninit` without deploy, with a zero balance [skip deploy]', async () => {
-    const address = client.address;
-    const contract = await blockchain.getContract(address);
-    expect(contract.accountState?.type).toEqual('uninit');
-    expect(contract.balance).toEqual(0n);
-});
-```
+import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
+import { Cell, toNano } from '@ton/core';
+import '@ton/test-utils';
+import { compile } from '@ton/blueprint';
+import { Client } from '../../wrappers/Client';
+import { FakeWalletApp } from './FakeWalletApp';
 
-Here, we obtain the `client` contract address (it's calculated from its code and state), retrieve the contract at that address from the test blockchain, and expect its state to be `uninit`. We also expect the account balance to be 0, as no transactions have occurred yet.
+describe('FakeWalletApp', () => {
+    let clientCode: Cell;
 
-If you run the tests now by executing
+    beforeAll(async () => {
+        clientCode = await compile('Client');
+    });
 
-```
-npx blueprint test
-```
+    let blockchain: Blockchain;
+    let fakeWalletContract: SandboxContract<TreasuryContract>;
+    let clientContract: SandboxContract<Client>;
 
-in the terminal window inside your project directory, you will see that this one fails—which is expected because there's no logic to skip deployment in `beforeEach`. There are several ways to do this; here, we’ll check for the presence of the `[skip deploy]` instruction in the test name to determine whether to skip deployment.
+    beforeEach(async () => {
+        blockchain = await Blockchain.create();
+        clientContract = blockchain.openContract(Client.createFromConfig({}, clientCode));
+        fakeWalletContract = await blockchain.treasury('fake_wallet');
 
-Update the `beforeEach` function to look like this:
-
-```typescript
-beforeEach(async () => {
-    blockchain = await Blockchain.create();
-    client = blockchain.openContract(Client.createFromConfig({}, code));
-    deployer = await blockchain.treasury('deployer');
-
-    if (expect.getState().currentTestName?.includes("[skip deploy]")) return;
-
-    const deployResult = await client.sendDeploy(deployer.getSender(), toNano('0.05'));
-    expect(deployResult.transactions).toHaveTransaction({
-        from: deployer.address,
-        to: client.address,
-        deploy: true,
-        success: true,
+        const deployResult = await clientContract.sendDeploy(fakeWalletContract.getSender(), toNano('0.05'));
+        expect(deployResult.transactions).toHaveTransaction({
+            from: fakeWalletContract.address,
+            to: clientContract.address,
+            deploy: true,
+            success: true,
+        });
     });
 });
 ```
 
-The only line added here is `if (expect.getState().currentTestName?.includes("[skip deploy]")) return;`. It checks for the presence of `[skip deploy]` in the current test's name, and if it's found, the deployment code is not executed.
+This code should be familiar to you from the tests we wrote in other tutorials. So far, there are no test cases here, but we already have some useful variables that we will use in the tests:
 
-The tests will now pass:
+1. `clientContract` – The smart contract we created in the first part of this tutorial (currently empty, residing at `contracts/tolk.ts`). It is deployed before each test case to a fresh instance of the test blockchain.
+2. `fakeWalletContract` – An instance of `TreasuryContract` provided by Sandbox. This serves as the **wallet smart contract** that we will use in the fake wallet app to send messages to `clientContract`.
 
-```
- PASS  tests/Client.spec.ts
-  Client
-    ✓ should be `uninit` without deploy, with a zero balance [skip deploy] (72 ms)
-```
+### Implementing the Wallet Logic
 
-Now, let's see what happens when someone sends TON to an account in the `uninit` state. Copy the previous test, paste it below, and make a few modifications so that the new one looks like this:
+Create the first test case in `FakeWalletApp.spec.ts`:
 
-```typescript
-it('should be `uninit` without deploy, with a positive balance after a transaction [skip deploy]', async () => {
-    const address = client.address;
-    await deployer.send({
-        to: address,
-        value: toNano(1),
-        sendMode: SendMode.PAY_GAS_SEPARATELY,
-        bounce: false
-    });
-    const contract = await blockchain.getContract(address);
-    expect(contract.accountState?.type).toEqual('uninit');
-    expect(contract.balance).toEqual(toNano(1));
-});
-```
-
-The difference here is that we send 1 TON to an `uninit` address (paying gas separately—i.e., from the sender's balance). The test expects the balance at the address to be exactly 1 TON (the balance is stored in nanotons, hence the `toNano` usage).
-
-> You might have noticed the `bounce: false` line in the test above. We will cover what this means in the next part of this tutorial. For now, you can treat it as *"keep the funds I sent you, even if there was an error processing the request."*
-
-Run the tests again, and they should both pass:
-
-```
- PASS  tests/Client.spec.ts
-  Client
-    ✓ should be `uninit` without deploy, with a zero balance [skip deploy] (171 ms)
-    ✓ should be `uninit` without deploy, with a positive balance after a transaction [skip deploy] (80 ms)
-```
-
-### `active` State
-
-Let's write another test to check the state of a deployed smart contract address.
-
-Add the following code below the previous test case:
-
-```typescript
-it('should be `active` after deploy, with a positive balance', async () => {
-    const address = client.address;
-    const contract = await blockchain.getContract(address);
-    expect(contract.accountState?.type).toEqual('active');
-    expect(contract.balance).toBeGreaterThan(0);
-});
-```
-
-It looks almost identical to the first one, with three key differences:
-
-1. Its name doesn't contain `[skip deploy]`.
-2. It expects the state to be `active`.
-3. It expects the balance to be greater than zero due to the deployment transaction, which includes some funds.
-
-Since there's no `[skip deploy]` instruction in the test name, the `beforeEach` function will execute the deployment steps, ensuring that all tests pass:
-
-```
- PASS  tests/Client.spec.ts
-  Client
-    ✓ should be `uninit` without deploy, with a zero balance [skip deploy] (171 ms)
-    ✓ should be `uninit` without deploy, with a positive balance after a transaction [skip deploy] (80 ms)
-    ✓ should be `active` after deploy, with a positive balance (77 ms)
-
-```
-
-### `frozen` State
-
-As of the time of writing, Sandbox won't mark a smart contract as `frozen` if it lacks funds to pay for its storage (as would happen on a real blockchain). Instead, it will simply reduce its balance to zero while keeping the contract active.
-
-> **Tip:** Read more about fees (particularly the storage fee) [here](https://docs.ton.org/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee).
-
-However, we can at least write a test to ensure that the contract balance decreases over time—though not before the contract receives a message to trigger payments.
-
-Add this test below the previous ones:
-
-```typescript
-it('should reduce balance over time', async () => {
-    const address = client.address;
-    let contract = await blockchain.getContract(address);
-
-    // Get and save the contract balance immediately after deployment.
-    const balanceAfterDeploy = contract.balance;
-    expect(balanceAfterDeploy).toBeGreaterThan(0n);
-
-    // Advance the time by one year.
-    blockchain.now = Math.floor(Date.now() / 1000) + 365 * 24 * 60 * 60;
-
-    // The contract balance should still be the same as after deployment.
-    // This is because the payment phase hasn't been triggered yet.
-    contract = await blockchain.getContract(address);
-    expect(contract.balance).toEqual(balanceAfterDeploy);
-
-    // Send a message to trigger the storage fee payment.
-    await deployer.send({
-        to: address,
-        value: toNano('0'),
-        sendMode: SendMode.PAY_GAS_SEPARATELY,
-    });
-
-    // Now the contract balance should be 0.
-    // On a real blockchain, the balance would become negative, and the contract would be frozen.
-    contract = await blockchain.getContract(address);
-    expect(contract.balance).toEqual(0n);
-});
-```
-
-Read the comments in the test above—they explain what happens at each step.
-
-Before running it, reduce the amount of TON sent to the contract during deployment in `beforeEach` to a smaller value so that it is consumed by fees more quickly.
-
-For example, update the deployment code like this:
-
-```typescript
-const deployResult = await client.sendDeploy(deployer.getSender(), toNano('0.0001'));
-```
-
-Run the tests again, and all should pass. If the last one doesn’t (e.g., due to changed fees in Sandbox), log the balance values to the console and check: it’s likely that you need to either reduce the amount of TON sent during deployment or increase the time elapsed on the test blockchain.
-
-Run the tests once again and ensure all are "green":
-
-```
- PASS  tests/Client.spec.ts
-  Client
-    ✓ should be `uninit` without deploy, with a zero balance [skip deploy] (171 ms)
-    ✓ should be `uninit` without deploy, with a positive balance after a transaction [skip deploy] (80 ms)
-    ✓ should be `active` after deploy, with a positive balance (77 ms)
-    ✓ should reduce balance over time (87 ms)
-
-```
-
-## Wrapping Up
-
-So far, we've learned about **raw contract addresses** and **account states**. In the second part of this tutorial, we will explore **user-friendly addresses**, their differences, and their roles in smart contract behavior.
