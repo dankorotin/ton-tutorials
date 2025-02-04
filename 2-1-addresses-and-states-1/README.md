@@ -279,4 +279,4 @@ Run the tests once again and ensure all are "green":
 
 ## Wrapping Up
 
-So far, we've learned about **raw contract addresses** and **account states**. In the second part of this tutorial, we will explore **user-friendly addresses**, their differences, and their roles in smart contract behavior.
+So far, we've learned about **raw contract addresses** and **account states**. In the [second part](../2-2-addresses-and-states-2/README.md) of this tutorial, we will explore **user-friendly addresses**, their differences, and their roles in smart contract behavior.
