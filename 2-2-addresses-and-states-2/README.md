@@ -219,7 +219,7 @@ it('should throw for incorrect addresses', async () => {
 
 > ⚠️ **Important!** In this test, we use error messages returned from the `Address` class in the `@ton` library. Since we have no control over them, the texts may change in future versions. If your test fails, check if the messages match.
 
-The test is very similar to the first one, but first it tries to pass an address string with the last character changed, and in the second one—with a removed character. You can modify a valid address any way you want and test it to ensure that even the slightest modification leads to a parsing failure.
+The test is very similar to the first one, but first it tries to pass an address string with the last character changed, and later—with a removed character. You can modify a valid address any way you want and test it to ensure that even the slightest modification leads to a parsing failure.
 
 ## Wrapping Up
 
