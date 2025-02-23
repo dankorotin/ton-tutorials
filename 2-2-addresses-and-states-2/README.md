@@ -1,4 +1,4 @@
-Addresses, Part 2: User-Friendly Addresses
+# Addresses, Part 2: User-Friendly Addresses
 
 ## Before We Begin
 
@@ -132,8 +132,8 @@ it('should parse correct addresses', async () => {
 
 Here, we are going to ultimately add some `expect` functions to check if the address string we pass to the wallet app can be parsed. But in order to do that, we need two key components:
 
-1. A valid user-friendly address string of a smart contract (we will use `client.tolk` we created earlier, but you can use any you like).
-2. A method in the fake wallet app to handle parsing the address and sending funds.
+1. A valid **user-friendly address string** of a smart contract (we will use `client.tolk` we created earlier, but you can use any you like).
+2. A **function** in the fake wallet app to handle parsing the address and sending funds.
 
 Let's deal with the address first. Add the following lines to the test case body, so that it looks like this:
 
@@ -223,4 +223,4 @@ The test is very similar to the first one, but first it tries to pass an address
 
 ## Wrapping Up
 
-In this part, we've learned about user-friendly addresses and their main benefit: any errors in such an address will lead to parsing failures. In the next part, we will dig deeper and add much more functionality to the wallet app—along with more tests!
+In this part, we've learned about **user-friendly addresses** and their main benefit: **any errors in such an address will lead to parsing failures**! In the next part, we will dig deeper and add much more functionality to the wallet app—along with more tests!
