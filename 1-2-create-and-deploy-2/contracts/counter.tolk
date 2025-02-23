@@ -9,7 +9,7 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
     // https://ton-blockchain.github.io/docs/tvm.pdf
     assert(msgBody.getRemainingBitsCount() >= 16, 9);
 
-    // 1-1-create-smart-contract. Begin parsing the existing data storage of the contract (i.e., read the previously saved data).
+    // 1-1-create-and-deploy-1. Begin parsing the existing data storage of the contract (i.e., read the previously saved data).
     // The saved data here is a `cell` stored in `c4` register of TVM.
     // More on registers: https://docs.ton.org/v3/documentation/tvm/tvm-overview#control-registers
     // After we begin parcing a `cell` it becomes a `slice`.
@@ -39,7 +39,7 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
     val finalizedCell = cellBuilder.endCell();
 
     // 8. Now store the cell overwriting the old value (also a `cell`,
-    // we read from it in steps 1-1-create-smart-contract and 2) in `c4` register.
+    // we read from it in steps 1-1-create-and-deploy-1 and 2) in `c4` register.
     setContractData(finalizedCell);
 }
 
@@ -49,7 +49,7 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
 // You can also omit `fun` here and declare it as `get total() { ...`:
 // https://docs.ton.org/v3/documentation/smart-contracts/tolk/tolk-vs-func/in-detail
 get fun total() {
-    // Note that here we use the same code as in steps 1-1-create-smart-contract and 2, but write it in a single line
+    // Note that here we use the same code as in steps 1-1-create-and-deploy-1 and 2, but write it in a single line
     // and return the read value right away.
     return getContractData().beginParse().loadUint(64);
 }
