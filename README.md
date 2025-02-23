@@ -12,7 +12,7 @@ Welcome aboard! 🏴‍☠️
 
 ### 1.1. [Create and Deploy, Part 1: Implementing Logic](1-1-create-and-deploy-1/README.md)
 
-Create a basic counter smart contract with Blueprint. Get acquainted with crucial details and basic Tolk syntax.
+Create a smart contract with Blueprint. Get acquainted with crucial details and Tolk syntax.
 
 ### 1.2. [Create and Deploy, Part 2: Deploying and Testing](1-2-create-and-deploy-2/README.md)
 
@@ -36,9 +36,9 @@ Apply TDD to implement and validate conditional logic while handling edge cases.
 
 To send a message, you need to know the address. Gain an in-depth understanding of raw addresses and account states on the TON Blockchain.
 
-### 2.2. Addresses, Part 2: User-Friendly Addresses
+### 2.2. [Addresses, Part 2: User-Friendly Addresses](2-2-addresses-and-states-2/README.md)
 
-🚧 **Coming Soon!** 🚧 Learn how to make sharing an address safer by ensuring correctness and indicating important traits.
+Learn about user-friendly addresses. Start writing a wallet app to test their different flavors.
 
 ---
 
