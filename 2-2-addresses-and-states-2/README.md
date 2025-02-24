@@ -169,20 +169,26 @@ Now, let's add a funds transfer function to the app and write the first tests fo
 > **Tip**: Remember that you can always open the files from this tutorial's repository to compare them to your implementation!
 
 ```typescript
-async transferFunds(addressString: string, amount: bigint): Promise<{ result?: SendMessageResult, error?: string }> {
-   try {
-      let addressDetails = Address.parseFriendly(addressString);
-   } catch (error) {
-      if (error instanceof Error) return { error: error.message };
-      return { error: 'Unable to parse address' };
-   }
+async transferFunds(addressString: string, amount: bigint): Promise<
+| { result: SendMessageResult; error?: never }
+| { result?: never; error: string }
+> {
+    try {
+        let addressDetails = Address.parseFriendly(addressString);
 
-   return {};
+        // Placeholder for future async operation with `walletContract`.
+        // For now, simulate a successful result.
+        const fakeResult: SendMessageResult = { events: [], externals: [], transactions: [] };
+        return { result: fakeResult };
+    } catch (error) {
+        if (error instanceof Error) return { error: error.message };
+        return { error: 'Unable to parse address' };
+    }
 }
 ```
 
 1. It has two parameters: `addressString`, expecting an address in a user-friendly format, and `amount` to transfer.
-2. It returns a promise with two optional fields: `result`, if the transfer was successful, and `error`, explaining a failure if it occurs.
+2. It returns a promise with two optional but mutually exclusive fields: `result` (if the transfer was successful) and `error` (if it fails).
 3. Inside, we call the static function `parseFriendly` of the `Address` class, which throws errors if it cannot parse the string we pass.
 4. If the address is parsed successfully, for now it will return an empty object.
 

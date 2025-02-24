@@ -10,14 +10,20 @@ export class FakeWalletApp {
         this.isTestnet = isTestnet;
     }
 
-    async transferFunds(addressString: string, amount: bigint): Promise<{ result?: SendMessageResult, error?: string }> {
+    async transferFunds(addressString: string, amount: bigint): Promise<
+        | { result: SendMessageResult; error?: never }
+        | { result?: never; error: string }
+    > {
         try {
             let addressDetails = Address.parseFriendly(addressString);
+
+            // Placeholder for future async operation with `walletContract`.
+            // For now, simulate a successful result.
+            const fakeResult: SendMessageResult = { events: [], externals: [], transactions: [] };
+            return { result: fakeResult };
         } catch (error) {
             if (error instanceof Error) return { error: error.message };
             return { error: 'Unable to parse address' };
         }
-
-        return {};
     }
 }
