@@ -157,7 +157,7 @@ export class FakeWalletApp {
 
         const result = await this.walletContract.send({
             to: addressDetails.address,
-            value: toNano(amount),
+            value: amount,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             bounce: addressDetails.isBounceable,
         });
@@ -167,4 +167,101 @@ export class FakeWalletApp {
 }
 ```
 
-As you can see, the app now correctly checks all the conditions we discussed above, and also performs the actual transaction. Run the tests to ensure they now pass.
+Read the code carefully and make sure you understand every line. As you can see, the app now correctly checks all the conditions we discussed above and also performs the actual transaction. Remember: **the bounceability flag only works because we implemented its handling in the fake wallet app**, where it gets parsed and translated to the smart contract (here: `bounce: addressDetails.isBounceable`)!
+
+Run the tests to ensure they now pass.
+
+## Bounceability In Practice
+
+Let's write some tests to see how the bounceability flag affects transactions to existing and non-existing smart contracts. Add the following test cases to `FakeWalletApp.spec.ts`:
+
+```typescript
+it('should send the full amount when sent to an existing non-bounceable address', async () => {
+    const walletApp = new FakeWalletApp(fakeWalletContract, false);
+    const address = clientContract.address.toString({ testOnly: false, bounceable: false });
+    const amountToSend = toNano(1);
+    const result = await walletApp.transferFunds(address, amountToSend);
+
+    expect(result.result?.transactions).toHaveTransaction({
+        from: fakeWalletContract.address,
+        to: clientContract.address,
+        value: amountToSend,
+        success: true
+    });
+});
+
+it('should send the full amount when sent to an existing bounceable address', async () => {
+    const walletApp = new FakeWalletApp(fakeWalletContract, false);
+    const address = clientContract.address.toString({ testOnly: false, bounceable: true });
+    const amountToSend = toNano(1);
+    const result = await walletApp.transferFunds(address, amountToSend);
+
+    expect(result.result?.transactions).toHaveTransaction({
+        from: fakeWalletContract.address,
+        to: clientContract.address,
+        value: amountToSend,
+        success: true
+    });
+});
+
+it('should send the full amount when sent to a non-existing non-bounceable address', async () => {
+    const nonExistingRawAddress = "0:cbd5fedaafb6bf68024eb52d8d3a497c920cfe44cd269ed7e10126ef5a1d4466";
+    const nonExistingAddress = Address.parseRaw(nonExistingRawAddress);
+    const nonExistingAddressString = nonExistingAddress.toString({ testOnly: false, bounceable: false })
+    const nonExistingContract = await blockchain.getContract(nonExistingAddress);
+
+    expect(nonExistingContract.balance).toEqual(0n);
+
+    const walletApp = new FakeWalletApp(fakeWalletContract, false);
+    const amountToSend = toNano(1);
+    const result = await walletApp.transferFunds(nonExistingAddressString, amountToSend);
+
+    expect(result.result?.transactions).toHaveTransaction({
+        from: fakeWalletContract.address,
+        to: nonExistingAddress,
+        value: amountToSend,
+        success: false
+    });
+
+    expect(nonExistingContract.balance).toEqual(1000000000n);
+});
+
+it('should bounce the sent amount when sent to a non-existing bounceable address', async () => {
+    const nonExistingRawAddress = "0:cbd5fedaafb6bf68024eb52d8d3a497c920cfe44cd269ed7e10126ef5a1d4466";
+    const nonExistingAddress = Address.parseRaw(nonExistingRawAddress);
+    const nonExistingAddressString = nonExistingAddress.toString({ testOnly: false, bounceable: true })
+    const nonExistingContract = await blockchain.getContract(nonExistingAddress);
+
+    expect(nonExistingContract.balance).toEqual(0n);
+
+    const walletApp = new FakeWalletApp(fakeWalletContract, false);
+    const amountToSend = toNano(1);
+    const result = await walletApp.transferFunds(nonExistingAddressString, amountToSend);
+
+    expect(result.result?.transactions).toHaveTransaction({
+        from: fakeWalletContract.address,
+        to: nonExistingAddress,
+        value: amountToSend,
+        success: false
+    });
+
+    expect(nonExistingContract.balance).toEqual(0n);
+});
+```
+
+By now, you should be able to understand what's being tested and how. Let's outline the most important parts:
+
+1. The first pair of tests checks what happens when you send TON to an existing smart contract via bounceable and non-bounceable user-friendly addresses. In both cases, the transaction is successful.
+2. The second pair checks the same scenario, but for a non-existing address. Sending a non-bounceable message still transfers the funds, even though the transaction is considered non-successful (this approach is used to fund smart contracts before deployment). Sending a bounceable message, however, returns ("bounces" back) the sent amount minus fees, leaving the address's balance unchanged.
+
+As a "homework" task, you can (and should) add checks to the tests to verify the sender's balance before and after each transaction. You can even retrieve the fees from transactions and implement an exact comparison!
+
+## Wrapping up
+
+Let's summarize the key takeaways from this rather lengthy 3-part tutorial:
+
+1. **Raw addresses are used on-chain** (when sending messages to smart contracts).
+2. **User-friendly addresses provide integrity checks** (via checksum calculation) and allow **annotating the expected address properties**: being deployed to a particular chain and expecting bounceable/non-bounceable messages.
+3. **All user-friendly address features are implemented in off-chain applications**, which may or may not respect the address traits, and might add additional behavior based on them.
+
+See you in the next one!

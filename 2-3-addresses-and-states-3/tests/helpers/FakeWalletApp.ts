@@ -32,7 +32,7 @@ export class FakeWalletApp {
 
         const result = await this.walletContract.send({
             to: addressDetails.address,
-            value: toNano(amount),
+            value: amount,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             bounce: addressDetails.isBounceable,
         });

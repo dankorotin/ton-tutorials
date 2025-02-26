@@ -1,5 +1,5 @@
 import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
-import { Cell, toNano } from '@ton/core';
+import { Address, Cell, toNano } from '@ton/core';
 import '@ton/test-utils';
 import { compile } from '@ton/blueprint';
 import { Client } from '../../wrappers/Client';
@@ -93,5 +93,77 @@ describe('FakeWalletApp', () => {
         const address = clientContract.address.toString({ testOnly: false, bounceable: false });
         const result = await walletApp.transferFunds(address, toNano(5));
         expect(result.error).toEqual('Sending more than 5 TON to a non-bounceable address is forbidden');
+    });
+
+    it('should send the full amount when sent to an existing non-bounceable address', async () => {
+        const walletApp = new FakeWalletApp(fakeWalletContract, false);
+        const address = clientContract.address.toString({ testOnly: false, bounceable: false });
+        const amountToSend = toNano(1);
+        const result = await walletApp.transferFunds(address, amountToSend);
+
+        expect(result.result?.transactions).toHaveTransaction({
+            from: fakeWalletContract.address,
+            to: clientContract.address,
+            value: amountToSend,
+            success: true
+        });
+    });
+
+    it('should send the full amount when sent to an existing bounceable address', async () => {
+        const walletApp = new FakeWalletApp(fakeWalletContract, false);
+        const address = clientContract.address.toString({ testOnly: false, bounceable: true });
+        const amountToSend = toNano(1);
+        const result = await walletApp.transferFunds(address, amountToSend);
+
+        expect(result.result?.transactions).toHaveTransaction({
+            from: fakeWalletContract.address,
+            to: clientContract.address,
+            value: amountToSend,
+            success: true
+        });
+    });
+
+    it('should send the full amount when sent to a non-existing non-bounceable address', async () => {
+        const nonExistingRawAddress = "0:cbd5fedaafb6bf68024eb52d8d3a497c920cfe44cd269ed7e10126ef5a1d4466";
+        const nonExistingAddress = Address.parseRaw(nonExistingRawAddress);
+        const nonExistingAddressString = nonExistingAddress.toString({ testOnly: false, bounceable: false })
+        const nonExistingContract = await blockchain.getContract(nonExistingAddress);
+
+        expect(nonExistingContract.balance).toEqual(0n);
+
+        const walletApp = new FakeWalletApp(fakeWalletContract, false);
+        const amountToSend = toNano(1);
+        const result = await walletApp.transferFunds(nonExistingAddressString, amountToSend);
+
+        expect(result.result?.transactions).toHaveTransaction({
+            from: fakeWalletContract.address,
+            to: nonExistingAddress,
+            value: amountToSend,
+            success: false
+        });
+
+        expect(nonExistingContract.balance).toEqual(1000000000n);
+    });
+
+    it('should bounce the sent amount when sent to a non-existing bounceable address', async () => {
+        const nonExistingRawAddress = "0:cbd5fedaafb6bf68024eb52d8d3a497c920cfe44cd269ed7e10126ef5a1d4466";
+        const nonExistingAddress = Address.parseRaw(nonExistingRawAddress);
+        const nonExistingAddressString = nonExistingAddress.toString({ testOnly: false, bounceable: true })
+        const nonExistingContract = await blockchain.getContract(nonExistingAddress);
+
+        expect(nonExistingContract.balance).toEqual(0n);
+
+        const walletApp = new FakeWalletApp(fakeWalletContract, false);
+        const amountToSend = toNano(1);
+        const result = await walletApp.transferFunds(nonExistingAddressString, amountToSend);
+
+        expect(result.result?.transactions).toHaveTransaction({
+            from: fakeWalletContract.address,
+            to: nonExistingAddress,
+            value: amountToSend,
+            success: false
+        });
+
+        expect(nonExistingContract.balance).toEqual(0n);
     });
 });
