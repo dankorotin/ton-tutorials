@@ -229,4 +229,4 @@ The test is very similar to the first one, but first it tries to pass an address
 
 ## Wrapping Up
 
-In this part, we've learned about **user-friendly addresses** and their main benefit: **any errors in such an address will lead to parsing failures**! In the next part, we will dig deeper and add much more functionality to the wallet app—along with more tests!
+In this part, we've learned about **user-friendly addresses** and their main benefit: **any errors in such an address will lead to parsing failures**! In the [next part](../2-3-addresses-and-states-3/README.md), we will dig deeper and add much more functionality to the wallet app—along with more tests!
