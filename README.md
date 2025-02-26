@@ -46,7 +46,7 @@ Learn about user-friendly addresses. Start writing a wallet app to test their di
 
 ### 2.3. [Addresses, Part 3: Flags](2-3-addresses-and-states-3/README.md)
 
-Implement checks for network type and bounceability flags in the wallet app. Gain a practical understanding of how bounceability affects funds transfers.
+Implement checks for network type and bounceability flags in the address. Gain a practical understanding of how bounceability affects funds transfers.
 
 ### 2.4. Internal Messages
 
