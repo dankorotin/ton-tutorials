@@ -30,6 +30,10 @@ Implement conditional logic using operation codes. Learn about exceptions and Te
 
 Apply TDD to implement and validate conditional logic while handling edge cases.
 
+### 1.6. Fees
+
+🚧 **Coming soon!** 🚧 A deep dive into fees on TON, along with tips and practical methods for estimating contract gas efficiency. 
+
 ## 👦 2. Communication
 
 ### 2.1. [Addresses, Part 1: Raw Addresses and States](2-1-addresses-and-states-1/README.md)
@@ -39,6 +43,14 @@ To send a message, you need to know the address. Gain an in-depth understanding 
 ### 2.2. [Addresses, Part 2: User-Friendly Addresses](2-2-addresses-and-states-2/README.md)
 
 Learn about user-friendly addresses. Start writing a wallet app to test their different flavors.
+
+### 2.3. [Addresses, Part 3: Flags](2-3-addresses-and-states-3/README.md)
+
+Implement checks for network type and bounceability flags in the wallet app. Gain a practical understanding of how bounceability affects funds transfers.
+
+### 2.4. Internal Messages
+
+🚧 **Coming soon!** 🚧 Everything you need to know about modes, flags, and more!
 
 ---
 
