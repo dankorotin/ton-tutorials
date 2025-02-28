@@ -22,6 +22,18 @@ We suggest [WebStorm](https://www.jetbrains.com/webstorm/) (it's the one we're u
 
 JetBrains IDEs (WebStorm, IDEA) [plugin](https://plugins.jetbrains.com/plugin/23382-ton) or VS Code [extension](https://marketplace.visualstudio.com/items?itemName=ton-core.tolk-vscode).
 
+## Tutorial Goals
+
+In this tutorial, we'll create a simple **counter smart contract**, deploy it to testnet, and increase and query the current total value. The logic will be very basic: it increments a counter by a specified number from an **internal message** and saves the total in its persistent data.
+
+**Internal messages** are those sent between blockchain entities and cannot be sent from off-chain. **Handling these consumes gas** (the blockchain currency paid for transactions, code execution, and storage).
+
+Contracts can also receive **external messages**, which are similar to internal ones but originate from outside the blockchain (e.g., from a wallet app to a wallet smart contract). **Handling external messages also consumes gas.**
+
+A dedicated **get method** will be implemented and explained later in the tutorial: it allows querying the current total. Calling **get methods is free** (meaning no gas is paid), as they don’t mutate the blockchain state and are handled off-chain (by a TON node with access to the chain state).
+
+You will experience sending messages in the next part of this tutorial, and we'll cover them in greater detail later in the series.
+
 ## Basic Concepts
 
 A **smart contract** is a program running on the TON Blockchain via its [TVM](https://docs.ton.org/v3/documentation/tvm/tvm-overview) (TON Virtual Machine). It consists of **code** (TVM instructions) and **data** (persistent state) stored at a specific **address**. It also has a **balance**: some amount of currency used to pay for its existence and computations.
@@ -31,18 +43,6 @@ A **smart contract** is a program running on the TON Blockchain via its [TVM](ht
 Smart contracts on TON interact only by sending and receiving **messages** (unlike in EVM-based chains, where calling other contracts can be done during the process of code execution). This pattern is called [Actor](https://docs.ton.org/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains#single-actor).
 
 The most important takeaway here is that **there's no way to predict how long it will take a message from one actor (i.e., smart contract) to reach another**, nor **how long it will take for the response to arrive**. However, **the delivery of messages is strictly guaranteed**.
-
-## Tutorial Goals
-
-In this tutorial, we'll create a simple **counter contract**, deploy it to testnet, and increase and query the current total value. The logic will be very basic: it increments a counter by a specified number from an **internal message** and saves the total in its persistent data.
-
-**Internal messages** are those sent between blockchain entities and cannot be sent from off-chain. **Handling these consumes gas** (the blockchain currency paid for transactions, code execution, and storage).
-
-Contracts can also receive **external messages**, which are similar to internal ones but originate from outside the blockchain (e.g., from a wallet app to a wallet smart contract). **Handling external messages also consumes gas.**
-
-A dedicated **get method** will be implemented and explained later in the tutorial: it allows querying the current total. Calling **get methods is free** (meaning no gas is paid), as they don’t mutate the blockchain state and are handled off-chain (by a TON node with access to the chain state).
-
-You will experience sending messages in the next part of this tutorial, and we'll cover them in greater detail later in the series.
 
 ## Creating the Project
 
