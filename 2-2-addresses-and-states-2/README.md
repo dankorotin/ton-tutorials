@@ -14,7 +14,7 @@ In this part of the tutorial, we will explore the traits and benefits of user-fr
 
 **Raw addresses don't provide any safety nets**: they don't indicate whether the funds should be returned to the sender on error (e.g., if there's no contract at the address or it cannot execute the request). They also don't reveal whether the address belongs to a production or test blockchain. Moreover, there's no validity check—accidentally replacing a character in an address won't make it invalid. **User-friendly addresses are here to fix this!**
 
-> **Tip:** You can find more details on user-friendly addresses in [TEP-2](https://github.com/ton-blockchain/TEPs/blob/master/text/0002-address.md#smart-contract-addresses) and [docs](https://docs.ton.org/v3/documentation/smart-contracts/addresses#user-friendly-address).
+> 🛟 **Tip:** You can find more details on user-friendly addresses in [TEP-2](https://github.com/ton-blockchain/TEPs/blob/master/text/0002-address.md#smart-contract-addresses) and [docs](https://docs.ton.org/v3/documentation/smart-contracts/addresses#user-friendly-address).
 
 A user-friendly address creation **starts with a 36-byte sequence**, composed as follows:
 
@@ -22,13 +22,13 @@ A user-friendly address creation **starts with a 36-byte sequence**, composed as
     - `isBounceable` If true (`0x11`), this means that a smart contract at the address expects bounceable internal messages that will "bounce back" to the sender if a problem occurs with its handling (carrying the original message’s TON value minus the fees). A non-bounceable flag (`0x51`), however, indicates that the messages are expected to be "consumed" by the receiver, adding the value in TON to its balance (again, after fees are paid). Typically, the bounceable flag is true for smart contracts with internal logic, and non-bounceable for wallets.
     - `isTestnetOnly` Addresses beginning with `0x80` should not be accepted by software running on the production network.
 
-2. **Workchain ID (1 byte).** A signed 8-bit integer (`0x00` for the Basechain, `0xff` for the Masterchain).
+2. **Workchain ID (1 byte).** A signed 8-bit integer (`0x00` for the BaseChain, `0xff` for the MasterChain).
 
-3. **Account ID (32 bytes).** The account ID is a big-endian 256-bit address within the workchain.
+3. **Account ID (32 bytes).** The account ID is a big-endian 256-bit address within the WorkChain.
 
-4. **Address Verification (2 bytes).** A CRC16-CCITT checksum of the previous 34 bytes. This ensures that the address is valid.
+4. **Address Verification (2 bytes).** A CRC16-CCITT checksum of the previous 34 bytes. This ensures that the address is valid. Even the slightest modification (such as replacing a character with one that looks similar or accidentally copying only part of the address) will lead to a parsing failure (we will verify this later in the tutorial).
 
-The 36-bit sequence of bytes is then encoded using regular or URL-friendly `base64`, resulting in a **48-character long user-friendly address**.
+The 36-bit sequence of bytes is then **encoded using regular or URL-friendly `base64`**, resulting in a **48-character long user-friendly address**.
 
 ## User-Friendly Addresses in Practice
 
@@ -66,7 +66,7 @@ export class FakeWalletApp {
 }
 ```
 
-> **Tip**: Your IDE might show warnings that some of the imports are unused. Ignore them for now, as they will disappear as we add more logic to the class.
+> 🛟 **Tip:** Your IDE might show warnings that some of the imports are unused. Ignore them for now, as they will disappear as we add more logic to the class.
 
 The fake wallet class we are creating has two `private readonly` (not "visible" outside the class) properties:
 
@@ -166,7 +166,7 @@ As you see, the user-friendly addresses don't differ much. The key takeaway here
 
 Now, let's add a funds transfer function to the app and write the first tests for it. Open the `FakeWalletApp.ts` file and add this function under the constructor:
 
-> **Tip**: Remember that you can always open the files from this tutorial's repository to compare them to your implementation!
+> 🛟 **Tip:** Remember that you can always open the files from this tutorial's repository to compare them to your implementation!
 
 ```typescript
 async transferFunds(addressString: string, amount: bigint): Promise<
@@ -225,8 +225,8 @@ it('should throw for incorrect addresses', async () => {
 
 > ⚠️ **Important!** In this test, we use error messages returned from the `Address` class in the `@ton` library. Since we have no control over them, the texts may change in future versions. If your test fails, check if the messages match.
 
-The test is very similar to the first one, but first it tries to pass an address string with the last character changed, and later—with a removed character. You can modify a valid address any way you want and test it to ensure that even the slightest modification leads to a parsing failure.
+The test is very similar to the first one, but first it tries to pass an address string with the last character changed, and later—with a removed character. You can modify a valid address any way you want and test it to ensure that **even the slightest modification leads to a parsing failure**!
 
 ## Wrapping Up
 
-In this part, we've learned about **user-friendly addresses** and their main benefit: **any errors in such an address will lead to parsing failures**! In the [next part](../2-3-addresses-and-states-3/README.md), we will dig deeper and add much more functionality to the wallet app—along with more tests!
+In this part, we've learned about **user-friendly addresses** and one of their benefits: **any errors in such an address will lead to parsing failures**! In the [next part](../2-3-addresses-and-states-3/README.md), we will dig deeper and add much more functionality to the wallet app—along with more tests!

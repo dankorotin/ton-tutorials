@@ -12,17 +12,17 @@ But since **contracts interact by sending messages**—and a message requires an
 
 ## Raw Address
 
-**Smart contract addresses on TON consist of two main components**: the **workchain ID** (a signed 32-bit integer) and the **account ID** (a 256-bit identifier, used in both existing chains).
+**Smart contract addresses on TON consist of two main components**: the **WorkChain ID** (a signed 32-bit integer) and the **account ID** (a 256-bit identifier, used in both existing chains).
 
-TON supports creating up to 2^32 **workchains** (i.e., separate blockchains), each of which can be subdivided into up to 2^60 **shards** (used to parallelize code execution). Currently, there are two workchains: Masterchain and Basechain.
+TON supports creating up to 2^32 **WorkChains** (i.e., separate blockchains), each of which can be subdivided into up to 2^60 **shards** (used to parallelize code execution). Currently, there are two WorkChains: MasterChain and BaseChain.
 
-**Masterchain** is "the blockchain of blockchains"—its blocks contain additional information (latest block hashes) about all other chains in the system. **It has an ID of `-1`.**
+**MasterChain** is "the blockchain of blockchains"—its blocks contain additional information (latest block hashes) about all other chains in the system. **It has an ID of `-1`.**
 
-**Basechain** is where most smart contracts exist and interact. It has significantly lower fees, so unless you need to do something highly specific, you would deploy your smart contracts to Basechain. **It has an ID of `0`.**
+**BaseChain** is where most smart contracts exist and interact. It has significantly lower fees, so unless you need to do something highly specific, you would deploy your smart contracts to Basechain. **It has an ID of `0`.**
 
-**The first part of the address** is the **workchain ID**, which is either `0` (Basechain) or `-1` (Masterchain).
+**The first part of the address** is the **WorkChain ID**, which is either `0` (BaseChain) or `-1` (MasterChain).
 
-> **Tip:** You can read more on this topic [here](https://docs.ton.org/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains).
+> 🛟 **Tip:** You can read more on this topic [here](https://docs.ton.org/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains).
 
 **The second part of the address** is a **256-bit hash** (`SHA-256`) of its **initial code** and **initial state**. This means that if two smart contracts have the exact same code after compilation and the exact same values at the moment of deployment, they will have the same address.
 
@@ -77,7 +77,7 @@ However, you can generate a valid random TON account address by combining a work
 
 For example, the following address: `0:cbd5fedaafb6bf68024eb52d8d3a497c920cfe44cd269ed7e10126ef5a1d4466`. You can see that it has a `nonexist` state [here](https://tonviewer.com/EQDL1f7ar7a_aAJOtS2NOkl8kgz-RM0mntfhASbvWh1EZsK7).
 
-> **Tip:** Replace the hash value with your own random SHA-256 hash, and you'll get a different address. It's *extremely unlikely* that you will generate the address of an existing contract.
+> 🛟 **Tip:** Replace the hash value with your own random SHA-256 hash, and you'll get a different address. It's *extremely unlikely* that you will generate the address of an existing contract.
 
 > ⚠️ **Important!** You might have noticed that the address displayed in Tonviewer (or another service of your choice) is different: `EQDL1f7ar7a_aAJOtS2NOkl8kgz-RM0mntfhASbvWh1EZsK7` in this case. This is because it’s a *user-friendly* representation of the raw address. We will learn about these soon.
 
@@ -169,7 +169,7 @@ it('should be `uninit` without deploy, with a positive balance after a transacti
 
 The difference here is that we send 1 TON to an `uninit` address (paying gas separately—i.e., from the sender's balance). The test expects the balance at the address to be exactly 1 TON (the balance is stored in nanotons, hence the `toNano` usage).
 
-> You might have noticed the `bounce: false` line in the test above. We will cover what this means in the next part of this tutorial. For now, you can treat it as *"keep the funds I sent you, even if there was an error processing the request."*
+> 🛟 **Tip:** You might have noticed the `bounce: false` line in the test above. We will cover what this means in the next part of this tutorial. For now, you can treat it as *"keep the funds I sent you, even if there was an error processing the request."*
 
 Run the tests again, and they should both pass:
 
@@ -216,7 +216,7 @@ Since there's no `[skip deploy]` instruction in the test name, the `beforeEach` 
 
 As of the time of writing, Sandbox won't mark a smart contract as `frozen` if it lacks funds to pay for its storage (as would happen on a real blockchain). Instead, it will simply reduce its balance to zero while keeping the contract active.
 
-> **Tip:** Read more about fees (particularly the storage fee) [here](https://docs.ton.org/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee).
+> 🛟 **Tip:** Read more about fees (particularly the storage fee) [here](https://docs.ton.org/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee).
 
 However, we can at least write a test to ensure that the contract balance decreases over time—though not before the contract receives a message to trigger payments.
 

@@ -10,9 +10,9 @@ Your first contract is ready to be deployed to a real blockchain! There's one ma
 
 The first step is to get some test TON from the test faucet: [Testgiver TON Bot](https://t.me/testgiver_ton_bot). You will need a wallet on testnet to receive and spend the test TON; an app like Tonkeeper will allow you to use one. Alternatively, you can use the web-based wallet [here](https://wallet.ton.org/?testnet=true).
 
-> **Important!** Creating a test wallet can be a confusing step for newcomers. A great article can help you overcome this obstacle if you encounter it: [Step-by-Step Guide for Working with Your First TON Wallet](https://tonhelloworld.com/01-wallet/).
+> ⚠️ **Important!** Creating a test wallet can be a confusing step for newcomers. A great article can help you overcome this obstacle if you encounter it: [Step-by-Step Guide for Working with Your First TON Wallet](https://tonhelloworld.com/01-wallet/).
 
-> **Tip:** If you’re stuck at any step, refer to [this document](https://docs.ton.org/v3/documentation/smart-contracts/getting-started/testnet). It includes helpful information about the test network, wallets, and more.
+> 🛟 **Tip:**  If you’re stuck at any step, refer to [this document](https://docs.ton.org/v3/documentation/smart-contracts/getting-started/testnet). It includes helpful information about the test network, wallets, and more.
 
 ### Wrappers
 
@@ -38,7 +38,7 @@ Find the `createFromConfig(config: ...)` function below. You will see that it us
 
 Now, take a look at the wrapper function below it: `sendDeploy(provider: ...)`. This function is responsible for deploying your smart contract. Blueprint will “pack” your contract code and data into a structure called a “bag of cells” (BOC), calculate the address based on this data, and send a request to your wallet to send this data (along with the amount of TON you specified) to the calculated address when you call the function.
 
-> **Note:** Don’t worry—it will be test TON if you’re deploying to testnet.
+> 🛟 **Tip:** Don’t worry—it will be test TON if you’re deploying to testnet.
 
 Let’s update the data cell creation code in this function to store a zero 16-bit integer in it (the initial counter value). Modify the `body: beginCell().endCell()` line to look like this:
 
@@ -114,7 +114,7 @@ Contract deployed at address EQAtcdYS2AsDEpNKFRmt9POvKWUB_WfNHbqzhCp3aP2uiOuQ
 You can view it at https://testnet.tonscan.org/address/EQAtcdYS2AsDEpNKFRmt9POvKWUB_WfNHbqzhCp3aP2uiOuQ
 ```
 
-> **Important!** Remember: if you didn't modify the methods in your smart contract in any significant way compared to the code from this tutorial (e.g., still expect a 16-bit unsigned integer, don't use flags, etc.), it will have the same address (as it's determined by the initial code and data). As a result, you may see transactions from other users when following the link.
+> ⚠️ **Important!** Remember: if you didn't modify the methods in your smart contract in any significant way compared to the code from this tutorial (e.g., still expect a 16-bit unsigned integer, don't use flags, etc.), it will have the same address (as it's determined by the initial code and data). As a result, you may see transactions from other users when following the link.
 
 You can use https://testnet.tonscan.org/ to check your contract's transactions, as well as your wallet's.
 
@@ -185,7 +185,7 @@ async getTotal(provider: ContractProvider) {
 
 Get methods are executed off-chain, so they don't consume any gas: no messages are sent, and the request is executed on a TON node that has access to the chain state. They're sent via an API and generally cost nothing to execute when called infrequently (as in testing).
 
-> **Important!** You might have noticed that the methods in the wrapper start with `send` and `get`. Stick to this convention for wrapper methods that send messages and call `get` methods.
+> ⚠️ **Important!** You might have noticed that the methods in the wrapper start with `send` and `get`. Stick to this convention for wrapper methods that send messages and call `get` methods.
 
 In the function above, we call the `total` method of the smart contract by its name and read the result as a number. It will be logged to the console in the script you will write next.
 

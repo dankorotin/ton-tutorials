@@ -34,7 +34,7 @@ it(`should allow sending to a matching chain type`, async () => {
 });
 ```
 
-Here, we create instances of the **fake wallet app** with the wallet contract “deployed” on testnet (`testnetWalletApp`) and on the production chain (`productionWalletApp`), and call the transfer method on them using addresses with matching workchain IDs. The tests will pass, as there's no logic yet to handle the flags, and we expect them to continue passing once that logic is implemented.
+Here, we create instances of the **fake wallet app** with the wallet contract “deployed” on testnet (`testnetWalletApp`) and on the production chain (`productionWalletApp`), and call the transfer method on them using addresses with matching WorkChain IDs. The tests will pass, as there's no logic yet to handle the flags, and we expect them to continue passing once that logic is implemented.
 
 Now, add another test case:
 

@@ -39,7 +39,7 @@ In the previous tutorials, we wrote the code *before* testing it. Now, we will r
 
 The (*only?*) drawback here is that it makes the process of software development somewhat longer. But in return, you will (*most likely*) get cleaner code that is guaranteed to work as intended (*if you covered all of the scenarios, of course* 😉). You will also be (*almost*) sure that if you introduce new behavior and it breaks something in the existing one, the tests will let you know.
 
-> If you want, you can run `npx blueprint test` in the console (make sure you're in the project's directory) to ensure all tests are currently "green".
+> 🛟 **Tip:** If you want, you can run `npx blueprint test` in the console (make sure you're in the project's directory) to ensure all tests are currently "green".
 
 ### Empty Message Body
 
