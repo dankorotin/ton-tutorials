@@ -82,7 +82,9 @@ Now, if the chain types don't match, the app will return an error explaining exa
 
 ## Checking for Bounceability
 
-Smart contracts with non-bounceable addresses (often wallets) will likely simply “consume” the message you send, along with any funds, regardless of whether they can handle the opcodes or other instructions in the message. Hence, sending large amounts to such addresses implies the risk of losing your funds. Of course, **there's no guarantee that a smart contract at a bounceable address will indeed bounce the message back if something goes wrong**, but at least the address *declares* that it will. Also, sending a message to an "empty" bounceable address ensures your funds (minus fees) are returned to your wallet.
+Smart contracts with non-bounceable addresses (often wallets) will likely simply “consume” the message you send, along with any funds, regardless of whether they can handle the opcodes or other instructions in the message. Hence, sending large amounts to such addresses implies the risk of losing your funds.
+
+Of course, **there's no guarantee that a smart contract at a bounceable address will indeed bounce the message back if something goes wrong**, but at least the address *declares* that it will. Also, sending a message to an "empty" bounceable address ensures your funds (minus fees) are returned to your wallet.
 
 Let's now add tests and implement the logic to:
 
@@ -119,6 +121,8 @@ These test cases differ in the following details:
 
 1. When creating the `address`, only the first test case makes it bounceable.
 2. The amount sent is adjusted according to the logic outlined above.
+
+> 🛟 **Tip:** Use console logging (`console.log`) in your tests to verify that the generated values (such as addresses) match your understanding and expectations.
 
 Run the tests, and all but the last one will pass. We only need to implement the final piece of logic: check the bounceability flag in the address and, if it’s non-bounceable, limit the amount to be sent. Update the fake wallet app implemetation (`tests/helpers/FakeWalletApp.ts`) to look like this:
 
@@ -167,7 +171,9 @@ export class FakeWalletApp {
 }
 ```
 
-Read the code carefully and make sure you understand every line. As you can see, the app now correctly checks all the conditions we discussed above and also performs the actual transaction. Remember: **the bounceability flag only works because we implemented its handling in the fake wallet app**, where it gets parsed and translated to the smart contract (here: `bounce: addressDetails.isBounceable`)!
+> ⚠️ **Important!** Read the code carefully and ensure you understand every line. Refer to the logic requirements we outlined above if you're unsure why a particular condition exists.
+
+As you can see, the app now correctly checks all the conditions we discussed above and also performs the actual transaction. Remember: **the bounceability flag only works because we implemented its handling in the fake wallet app**, where it gets parsed and translated to the smart contract (here: `bounce: addressDetails.isBounceable`)!
 
 Run the tests to ensure they now pass.
 
@@ -249,10 +255,10 @@ it('should bounce the sent amount when sent to a non-existing bounceable address
 });
 ```
 
-By now, you should be able to understand what's being tested and how. Let's outline the most important parts:
+By now, you should be able to understand what's being tested and how (the test case names should guide you if you're unsure). Let's outline the most important parts:
 
-1. The first pair of tests checks what happens when you send TON to an existing smart contract via bounceable and non-bounceable user-friendly addresses. In both cases, the transaction is successful.
-2. The second pair checks the same scenario, but for a non-existing address. Sending a non-bounceable message still transfers the funds, even though the transaction is considered non-successful (this approach is used to fund smart contracts before deployment). Sending a bounceable message, however, returns ("bounces" back) the sent amount minus fees, leaving the address's balance unchanged.
+1. The **first pair of tests** checks what happens when you send TON to an **existing** smart contract via **bounceable and non-bounceable user-friendly addresses**. In both cases, the transaction is successful.
+2. The **second pair** tests the same scenario but with a **non-existing address**. Sending a **non-bounceable message still transfers the funds**, even though the transaction is considered non-successful (this approach is used to fund smart contracts before deployment). Sending a **bounceable message, however, returns ("bounces" back) the sent amount minus fees**, leaving the address's balance unchanged.
 
 As a "homework" task, you can (and should) add checks to the tests to verify the sender's balance before and after each transaction. You can even retrieve the fees from transactions and implement an exact comparison!
 
@@ -263,5 +269,7 @@ Let's summarize the key takeaways from this rather lengthy 3-part tutorial:
 1. **Raw addresses are used on-chain** (when sending messages to smart contracts).
 2. **User-friendly addresses provide integrity checks** (via checksum calculation) and allow **annotating the expected address properties**: being deployed to a particular chain and expecting bounceable/non-bounceable messages.
 3. **All user-friendly address features are implemented in off-chain applications**, which may or may not respect the address traits, and might add additional behavior based on them.
+
+Congratulations on completing this rather lengthy three-part tutorial! 🥳🎉🎊
 
 See you in the next one!
