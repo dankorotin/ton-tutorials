@@ -2,7 +2,7 @@
 
 ## Before We Begin
 
-Here, we assume that you followed the first two parts of this tutorial: [Create and Deploy, Part 1: Implementing Logic](../1-1-create-and-deploy-1/README.md) and [Testing Smart Contracts](../1-3-tests/README.md).
+Here, we assume that you followed the [previous part](../1-3-tests/README.md) of this tutorial.
 
 > **This tutorial uses the code from the previous one, so we suggest you copy it to a separate directory and work there**.
 
