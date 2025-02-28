@@ -82,7 +82,7 @@ As mentioned above, a smart contract has some **code** (functions like this) and
 
 Your smart contract also has its own storage (**data**): a root cell stored in the so-called `c4` register (potentially having links to more cells if you need to store more than 1023 bits). Let's start by reading the data it consists of.
 
-> 🛟 **Tip:* If you ever get confused, you can always open the `counter.tolk` file in this tutorial's repository and take a look at the final implementation. The code there is commented in detail, helping you understand what's going on and why.
+> 🛟 **Tip:** If you ever get confused, you can always open the `counter.tolk` file in this tutorial's repository and take a look at the final implementation. The code there is commented in detail, helping you understand what's going on and why.
 
 Add the following line inside the function:
 ```tolk

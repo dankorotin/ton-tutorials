@@ -12,9 +12,9 @@ Welcome aboard! 🏴‍☠️
 
 ### 1.1. [Create and Deploy, Part 1: Implementing Logic](1-1-create-and-deploy-1/README.md)
 
-Create a smart contract with Blueprint. Get acquainted with crucial details and Tolk syntax.
+Create a smart contract using Blueprint. Get acquainted with Tolk syntax and implement basic logic.
 
-### 1.2. [Create and Deploy, Part 2: Deploying and Testing](1-2-create-and-deploy-2/README.md)
+### 1.2. [Create and Deploy, Part 2: Deployment, Wrappers, Message Basics](1-2-create-and-deploy-2/README.md)
 
 Deploy the smart contract to testnet. Test its behavior manually using internal and `get` messages.
 
