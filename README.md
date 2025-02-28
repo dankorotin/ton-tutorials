@@ -6,49 +6,49 @@ Tolk is a smart contract development language for The Open Network (TON) blockch
 
 Welcome aboard! 🏴‍☠️
 
-# Tutorials
+## Tutorials
 
-## 👶 1. Basics and Testing
+### 👶 1. Basics and Testing
 
-### 1.1. [Create and Deploy, Part 1: Implementing Logic](1-1-create-and-deploy-1/README.md)
+#### 1.1. [Create and Deploy, Part 1: Implementing Logic](1-1-create-and-deploy-1/README.md)
 
 Create a smart contract using Blueprint. Get acquainted with Tolk syntax and implement basic logic.
 
-### 1.2. [Create and Deploy, Part 2: Deployment, Wrappers, Message Basics](1-2-create-and-deploy-2/README.md)
+#### 1.2. [Create and Deploy, Part 2: Deployment, Wrappers, Message Basics](1-2-create-and-deploy-2/README.md)
 
 Deploy the smart contract to testnet. Test its behavior manually using internal and `get` messages.
 
-### 1.3. [Automated Testing](1-3-tests/README.md)
+#### 1.3. [Automated Testing](1-3-tests/README.md)
 
 Automate smart contract testing using Sandbox. Understand the test environment and test cases.
 
-### 1.4. [Conditional Logic, Part 1: Opcodes, Exceptions, and TDD](1-4-opcodes-and-tdd-1/README.md)
+#### 1.4. [Conditional Logic, Part 1: Opcodes, Exceptions, and TDD](1-4-opcodes-and-tdd-1/README.md)
 
 Implement conditional logic using operation codes. Learn about exceptions and Test-Driven Development (TDD).
 
-### 1.5. [Conditional Logic, Part 2: Handling Valid Opcodes](1-5-opcodes-and-tdd-2/README.md)
+#### 1.5. [Conditional Logic, Part 2: Handling Valid Opcodes](1-5-opcodes-and-tdd-2/README.md)
 
 Apply TDD to implement and validate conditional logic while handling edge cases.
 
-### 1.6. Fees
+#### 1.6. Fees
 
 🚧 **Coming soon!** 🚧 A deep dive into fees on TON, along with tips and practical methods for estimating contract gas efficiency. 
 
-## 👦 2. Communication
+### 👦 2. Communication
 
-### 2.1. [Addresses, Part 1: Raw Addresses and States](2-1-addresses-and-states-1/README.md)
+#### 2.1. [Addresses, Part 1: Raw Addresses and States](2-1-addresses-and-states-1/README.md)
 
 To send a message, you need to know the address. Gain an in-depth understanding of raw addresses and account states on the TON Blockchain.
 
-### 2.2. [Addresses, Part 2: User-Friendly Addresses](2-2-addresses-and-states-2/README.md)
+#### 2.2. [Addresses, Part 2: User-Friendly Addresses](2-2-addresses-and-states-2/README.md)
 
 Learn about user-friendly addresses. Start writing a wallet app to test their different flavors.
 
-### 2.3. [Addresses, Part 3: Flags](2-3-addresses-and-states-3/README.md)
+#### 2.3. [Addresses, Part 3: Flags](2-3-addresses-and-states-3/README.md)
 
 Implement checks for network type and bounceability flags in user-friendly addresses. Gain a practical understanding of how bounceability affects transactions.
 
-### 2.4. Internal Messages
+#### 2.4. Internal Messages
 
 🚧 **Coming soon!** 🚧 Everything you need to know about modes, flags, and more!
 
