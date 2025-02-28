@@ -40,7 +40,7 @@ In this tutorial, we'll create a simple **counter contract**, deploy it to testn
 
 Contracts can also receive **external messages**, which are similar to internal ones but originate from outside the blockchain (e.g., from a wallet app to a wallet smart contract). **Handling external messages also consumes gas.**
 
-A dedicated `get` method will be implemented and explained later in the tutorial: it allows querying the current total. **Get methods are free** (meaning no gas is paid), as they don’t mutate the blockchain state and are handled off-chain (by a TON node with access to the chain state).
+A dedicated **get method** will be implemented and explained later in the tutorial: it allows querying the current total. Calling **get methods is free** (meaning no gas is paid), as they don’t mutate the blockchain state and are handled off-chain (by a TON node with access to the chain state).
 
 You will experience sending messages in the next part of this tutorial, and we'll cover them in greater detail later in the series.
 
