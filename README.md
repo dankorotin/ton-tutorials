@@ -16,7 +16,7 @@ Create a smart contract using Blueprint. Get acquainted with Tolk syntax and imp
 
 #### 1.2. [Create and Deploy, Part 2: Deployment, Wrappers, Message Basics](1-2-create-and-deploy-2/README.md)
 
-Deploy the smart contract to testnet. Test its behavior manually using internal and `get` messages.
+Deploy the smart contract to testnet. Gain a basic understanding of wrappers, internal and external messages, and get methods.
 
 #### 1.3. [Automated Testing](1-3-tests/README.md)
 
