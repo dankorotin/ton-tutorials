@@ -42,7 +42,7 @@ Welcome aboard! 🏴‍☠️
 
 #### 2.1. [Addresses, Part 1: Raw Addresses and States](2-1-addresses-and-states-1/README.md)
 
-- To send a message, you need to know the address. Gain an in-depth understanding of raw addresses and account states on the TON Blockchain.
+- Gain an in-depth understanding of raw addresses and account states on the TON Blockchain.
 
 #### 2.2. [Addresses, Part 2: User-Friendly Addresses](2-2-addresses-and-states-2/README.md)
 
