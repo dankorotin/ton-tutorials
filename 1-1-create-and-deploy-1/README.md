@@ -36,15 +36,13 @@ The most important takeaway here is that **there's no way to predict how long it
 
 In this tutorial, we'll create a simple **counter contract**, deploy it to testnet, and increase and query the current total value. The logic will be very basic: it increments a counter by a specified number from an **internal message** and saves the total in its persistent data.
 
-> **Internal messages** are those sent between blockchain entities and cannot be sent from off-chain. **These methods consume gas** (blockchain currency paid for transactions, code execution, and storage).
+**Internal messages** are those sent between blockchain entities and cannot be sent from off-chain. **Handling these consumes gas** (the blockchain currency paid for transactions, code execution, and storage).
 
-A dedicated `get` method will be implemented and explained later in the tutorial: it allows querying the current total.
+Contracts can also receive **external messages**, which are similar to internal ones but originate from outside the blockchain (e.g., from a wallet app to a wallet smart contract). **Handling external messages also consumes gas.**
 
-> **`Get` methods are free** (meaning no gas is paid), as they don't mutate the blockchain state and are handled off-chain.
+A dedicated `get` method will be implemented and explained later in the tutorial: it allows querying the current total. **Get methods are free** (meaning no gas is paid), as they don’t mutate the blockchain state and are handled off-chain (by a TON node with access to the chain state).
 
-Contracts can also receive **external messages**, which are somewhat similar to internal ones but come from outside the blockchain. We will cover handling these in a later tutorial.
-
-> **For those with some experience in TON development:** We will not be checking for the existence of opcodes and flags in the incoming message to keep this tutorial simple, but we will add an `assert` to ensure there is enough data to convert to a number.
+You will experience sending messages in the next part of this tutorial, and we'll cover them in greater detail later in the series.
 
 ## Creating the Project
 
