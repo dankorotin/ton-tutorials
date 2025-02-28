@@ -91,13 +91,13 @@ export async function run(provider: NetworkProvider) {
 }
 ```
 
-The scripts in this directory execute the code written in wrappers and can be run with a console command you'll learn soon. First, let's understand what this particular script does:
+The scripts in this directory can be run with a console command you'll learn soon. First, let's understand what this particular script does:
 
-1. It creates and compiles the wrapper object we modified above.
-2. Next, it calls the `sendDeploy(provider: ...)` method on it, effectively sending an internal message from your wallet contract with the contract code, data, and 0.05 TON attached.
+1. It compiles the smart contract.  
+2. Next, it calls the `sendDeploy(provider: ...)` method of the wrapper, effectively sending an internal message from your wallet contract with the contract code, initial data, and 0.05 TON attached to the calculated address. 
 3. Finally, it awaits the successful deployment.
 
-Now it's finally time to deploy the contract! Open the terminal and run the following command:
+Now, it's finally time to deploy the contract! Open the terminal and run the following command:
 
 ```bash
 npx blueprint run
