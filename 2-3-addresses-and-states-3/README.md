@@ -255,6 +255,8 @@ it('should bounce the sent amount when sent to a non-existing bounceable address
 });
 ```
 
+> 🛟 **Tip:** `1000000000n` in one of the test cases above is a `bigint` (hence the `n` at the end) and represents 1 billion nanotons—this is how TON values are stored on-chain. **1 billion nanotons equals 1 TON.** We explore this topic in greater detail in the fees tutorial!
+
 By now, you should be able to understand what's being tested and how (the test case names should guide you if you're unsure). Let's outline the most important parts:
 
 1. The **first pair of tests** checks what happens when you send TON to an **existing** smart contract via **bounceable and non-bounceable user-friendly addresses**. In both cases, the transaction is successful.
