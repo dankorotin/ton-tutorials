@@ -10,11 +10,11 @@ Your first contract is ready to be deployed to a real blockchain! There's one ma
 
 The first step is to get some test TON from the test faucet: [Testgiver TON Bot](https://t.me/testgiver_ton_bot). You will need a wallet on testnet to receive and spend the test TON; an app like Tonkeeper will allow you to use one. Alternatively, you can use the web-based wallet [here](https://wallet.ton.org/?testnet=true).
 
-> ⚠️ **Important!** Creating a test wallet can be a confusing step for newcomers. A great article can help you overcome this obstacle if you encounter it: [Step-by-Step Guide for Working with Your First TON Wallet](https://tonhelloworld.com/01-wallet/).
+> 🛟 **Tip:** Creating a test wallet can be a confusing step for newcomers. This great article can help you overcome this obstacle if you encounter it: [Step-by-Step Guide for Working with Your First TON Wallet](https://tonhelloworld.com/01-wallet/).
 
-> 🛟 **Tip:**  If you’re stuck at any step, refer to [this document](https://docs.ton.org/v3/documentation/smart-contracts/getting-started/testnet). It includes helpful information about the test network, wallets, and more.
+> 🛟 **Tip:** If you’re stuck at any step, refer to [this document](https://docs.ton.org/v3/documentation/smart-contracts/getting-started/testnet). It includes helpful information about the test network, wallets, and more.
 
-### Wrappers
+## Wrappers
 
 Wrappers help you send **internal messages** (on-chain) to your smart contract address from your wallet contract. For example, if you connect your **wallet app** (an **off-chain** entity—say, Tonkeeper on your smartphone), Blueprint will call the app with a request to send a certain amount of TON to your smart contract address, along with some data. If you confirm the transaction, your wallet app will send an **external (off-chain to on-chain) message** via an API to your **wallet smart contract**. It will be signed with your private key, so the wallet smart contract "knows" it can trust the received request. The wallet smart contract then sends the message (containing the data and the TON amount you requested to transfer) to **your smart contract address**.
 
@@ -79,7 +79,7 @@ export class Counter implements Contract {
 }
 ```
 
-### Scripts
+## Scripts
 
 Navigate to the `scripts` directory and open the only file there: `deployCounter`. It's a TypeScript file containing one function:
 
@@ -91,13 +91,13 @@ export async function run(provider: NetworkProvider) {
 }
 ```
 
-The scripts in this directory execute the code written in wrappers and can be run with a console command you'll learn soon. First, let's understand what this particular script does:
+The scripts in this directory can be run with a console command you'll learn soon. First, let's understand what this particular script does:
 
-1. It creates and compiles the wrapper object we modified above.
-2. Next, it calls the `sendDeploy(provider: ...)` method on it, effectively sending an internal message from your wallet contract with the contract code, data, and 0.05 TON attached.
+1. It compiles the smart contract.  
+2. Next, it calls the `sendDeploy(provider: ...)` method of the wrapper, effectively sending an internal message from your wallet contract with the contract code, initial data, and 0.05 TON attached to the calculated address. 
 3. Finally, it awaits the successful deployment.
 
-Now it's finally time to deploy the contract! Open the terminal and run the following command:
+Now, it's finally time to deploy the contract! Open the terminal and run the following command:
 
 ```bash
 npx blueprint run
@@ -172,9 +172,9 @@ Execute `npx blueprint run` in the console again, and this time you will be prov
 
 If everything went well, your wallet's balance will decrease, and you will see the transaction in the explorer ([here](https://testnet.tonscan.org/address/EQAtcdYS2AsDEpNKFRmt9POvKWUB_WfNHbqzhCp3aP2uiOuQ) or at the address of your contract).
 
-## Calling `get` Methods
+## Calling Get Methods
 
-Finally, let's add a way to call the `get` method on our smart contract and check the total! Add the following code below the `sendIncrement(provider: ...)` function in the wrapper:
+Finally, let's add a way to call the get method on our smart contract and check the total! Add the following code below the `sendIncrement(provider: ...)` function in the wrapper:
 
 ```typescript
 async getTotal(provider: ContractProvider) {
