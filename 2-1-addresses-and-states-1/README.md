@@ -18,7 +18,7 @@ TON supports creating up to 2^32 **WorkChains** (i.e., separate blockchains), ea
 
 **MasterChain** is "the blockchain of blockchains"—its blocks contain additional information (latest block hashes) about all other chains in the system. **It has an ID of `-1`.**
 
-**BaseChain** is where most smart contracts exist and interact. It has significantly lower fees, so unless you need to do something highly specific, you would deploy your smart contracts to Basechain. **It has an ID of `0`.**
+**BaseChain** is where most smart contracts exist and interact. It has significantly lower fees, so unless you need to do something highly specific, you would deploy your smart contracts to BaseChain. **It has an ID of `0`.**
 
 **The first part of the address** is the **WorkChain ID**, which is either `0` (BaseChain) or `-1` (MasterChain).
 
